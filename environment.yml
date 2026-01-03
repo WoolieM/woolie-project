@@ -1,0 +1,14 @@
+name: fastapi-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.13
+  - pip
+  - pytest
+  - python-dotenv
+  - pandas
+  - sqlmodel
+  - ipykernel #Option only for test purpose
+  - pip:
+    - fastapi[standard]
