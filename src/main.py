@@ -38,7 +38,7 @@ class UserLogin(BaseModel):
     password: str
 
 
-@app.post('/login/{my_login}', response_model=Union[UserPublic, Message])
+@app.post('/login/{my_login}', response_model= UserPublic | Message)
 def login(my_login: str, user_data: UserLogin):
     if my_login == 'yes':
         user_from_db = {
@@ -74,8 +74,20 @@ def update_employee(emp_id: int, employee: EmployeeUpdate):
 
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+async def read_item(
+        item_id: str,
+        q: str | None = None,
+        short: bool = False
+        
+    ):
+    item = {'item_id': item_id}
+    if q:
+        item.update({'q': q})
+    if not short:
+        item.update(
+            {'description': 'This sucks'}
+        )
+    return item
 
 
 @app.put("/items/{item_id}")
@@ -102,3 +114,5 @@ async def get_model(model_name: ModelName):
     if model_name.value == "lenet":
         return {"model_name": model_name, "message": "LeCNN all the images"}
     return {"model_name": model_name, "message": "Have some residuals"}
+
+
