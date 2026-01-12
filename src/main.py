@@ -21,7 +21,8 @@ class EmployeeUpdate(BaseModel):
 class Item(BaseModel):
     name: str
     price: float
-    is_offer: Union[bool, None] = None
+    description: str | None = None
+    tax: float | None = None
 
 
 class UserPublic(BaseModel):
@@ -76,7 +77,7 @@ def update_employee(emp_id: int, employee: EmployeeUpdate):
 @app.get("/items/{item_id}")
 async def read_item(
         item_id: str,
-        q: str | None = None,
+        q: str,
         short: bool = False
         
     ):
@@ -91,13 +92,10 @@ async def read_item(
 
 
 @app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
+async def update_item(item_id: int, item: Item):
     return {
-        "item_name": item.name,
-        "item_id": item_id,
-        "is_offer": item.is_offer,
-        "mytest_aa": item.price,
-        "mytest_bb": item.model_dump()
+        'item_id_up': item_id,
+        **item.model_dump()
     }
 
 
@@ -116,3 +114,27 @@ async def get_model(model_name: ModelName):
     return {"model_name": model_name, "message": "Have some residuals"}
 
 
+@app.get("/items_aa/{item_id}")
+async def read_user_item(
+        item_id: str,
+        needy: str,
+        skip: int = 0,
+        limit: int | None = None
+        
+    ):
+    item = {
+        'item_id': item_id,
+        'needy': needy,
+        'skip': skip,
+        'limit': limit
+    }
+    return item
+
+
+@app.post('/item/')
+async def create_item(item: Item):
+    item_dict = item.model_dump()
+    if item.tax is not None:
+        price_with_tax = item.price + item.tax
+    item_dict.update({'price and tax': price_with_tax})
+    return item_dict
