@@ -1,5 +1,5 @@
-from typing import Union
-from fastapi import FastAPI
+from typing import Annotated
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from enum import Enum
 
@@ -21,7 +21,7 @@ class EmployeeUpdate(BaseModel):
 class Item(BaseModel):
     name: str
     price: float
-    is_offer: Union[bool, None] = None
+    is_offer: bool | None = None
 
 
 class UserPublic(BaseModel):
@@ -38,7 +38,7 @@ class UserLogin(BaseModel):
     password: str
 
 
-@app.post('/login/{my_login}', response_model=Union[UserPublic, Message])
+@app.post('/login/{my_login}', response_model=UserPublic | Message)
 def login(my_login: str, user_data: UserLogin):
     if my_login == 'yes':
         user_from_db = {
@@ -74,8 +74,21 @@ def update_employee(emp_id: int, employee: EmployeeUpdate):
 
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
+async def read_item(item_id: int, q: str | None = None):
     return {"item_id": item_id, "q": q}
+
+
+@app.get("/items/")
+async def read_items(
+    q: Annotated[str | None, Query(
+        max_length=10, min_length=1, alias="item-query")] = None
+):
+    results = {
+        'items': [{'item_id': 'Foo'}, {'item_id': 'Bar'}]
+    }
+    if q:
+        results.update({'q': q})
+    return results
 
 
 @app.put("/items/{item_id}")
