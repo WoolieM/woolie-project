@@ -1,8 +1,8 @@
-from typing import Annotated
-from fastapi import FastAPI, Query
-from pydantic import BaseModel
+from typing import Annotated, Literal
+from fastapi import FastAPI, Query, Path
+from pydantic import BaseModel, AfterValidator, Field
 from enum import Enum
-
+import random
 app = FastAPI()
 
 
@@ -10,6 +10,18 @@ fake_db = {
     1:  {'name': 'woolie', 'age': 14, 'country': 'Australia'},
     2:  {'name': 'Cassy', 'age': 22, 'country': 'UK'}
 }
+
+data_1 = {
+    "isbn-9781529046137": "The Hitchhiker's Guide to the Galaxy",
+    "imdb-tt0371724": "The Hitchhiker's Guide to the Galaxy",
+    "isbn-9781439512982": "Isaac Asimov: The Complete Stories, Vol. 2"
+}
+
+
+def check_valid_id(id: str):
+    if not id.startswith(('isbn-', 'imdb-')):
+        raise ValueError('Invalid ID format, abc')
+    return id
 
 
 class EmployeeUpdate(BaseModel):
@@ -21,14 +33,9 @@ class EmployeeUpdate(BaseModel):
 class Item(BaseModel):
     name: str
     price: float
-
-
-<< << << < HEAD
-is_offer: bool | None = None
-== == == =
-description: str | None = None
-tax: float | None = None
->>>>>> > 93f4302a87664e7275d5bf5cc4f42cce1678fb27
+    is_offer: bool | None = None
+    description: str | None = None
+    tax: float | None = None
 
 
 class UserPublic(BaseModel):
@@ -45,17 +52,7 @@ class UserLogin(BaseModel):
     password: str
 
 
-<< << << < HEAD
-
-
 @app.post('/login/{my_login}', response_model=UserPublic | Message)
-== == == =
-
-
-@app.post('/login/{my_login}', response_model=UserPublic | Message)
->>>>>> > 93f4302a87664e7275d5bf5cc4f42cce1678fb27
-
-
 def login(my_login: str, user_data: UserLogin):
     if my_login == 'yes':
         user_from_db = {
@@ -96,7 +93,7 @@ async def read_item(item_id: int, q: str | None = None):
 
 
 @app.get("/items_aa/{item_id}")
-async def read_item(
+async def read_item_aa(
         item_id: str,
         q: str,
         short: bool = False
@@ -114,8 +111,17 @@ async def read_item(
 
 @app.get("/items/")
 async def read_items(
-    q: Annotated[str | None, Query(
-        max_length=10, min_length=1, alias="item-query")] = None
+    q: Annotated[
+        list[str] | None,
+        Query(
+            title='i am too awesome woolie',
+            description='everyting is going to be okay',
+            max_length=10,
+            min_length=3,
+            alias="item-query",
+            deprecated=True
+        )
+    ] = ['my_defualt_1', 'my_defualt_2', 'my_defualt_3']
 ):
     results = {
         'items': [{'item_id': 'Foo'}, {'item_id': 'Bar'}]
@@ -123,6 +129,20 @@ async def read_items(
     if q:
         results.update({'q': q})
     return results
+
+
+@app.get("/items_2/")
+async def read_items_2(
+    id: Annotated[
+        str | None,
+        AfterValidator(check_valid_id)
+    ] = None
+):
+    if id:
+        item = data_1.get(id)
+    else:
+        id, item = random.choice(list(data_1.items()))
+    return {'id': id, 'name': item}
 
 
 @app.put("/items/{item_id}")
@@ -148,27 +168,61 @@ async def get_model(model_name: ModelName):
     return {"model_name": model_name, "message": "Have some residuals"}
 
 
-@app.get("/items_aa/{item_id}")
-async def read_user_item(
-        item_id: str,
-        needy: str,
-        skip: int = 0,
-        limit: int | None = None
-
-):
-    item = {
-        'item_id': item_id,
-        'needy': needy,
-        'skip': skip,
-        'limit': limit
-    }
-    return item
-
-
 @app.post('/item/')
 async def create_item(item: Item):
     item_dict = item.model_dump()
+    price_with_tax = item.price
+
     if item.tax is not None:
         price_with_tax = item.price + item.tax
+
     item_dict.update({'price and tax': price_with_tax})
     return item_dict
+
+
+@app.get('/items_3/{item_id}')
+async def read_items_3(
+    item_id: Annotated[
+        int,
+        Path(title='The ID of the item to get Wooliter', ge=3)
+    ],
+    q: Annotated[
+        str | None,
+        Query(alias='item-query')
+    ],
+    size: Annotated[
+        float,
+        Query(
+            gt=0,
+            lt=10.5,
+            description='just put float',
+            alias='float-query-abwoo'
+
+        )
+    ]
+):
+    resutls = {'item_id': item_id}
+    if q:
+        resutls.update({'q': q})
+    if size:
+        resutls.update({'size': size})
+    return resutls
+
+
+class FilterParams(BaseModel):
+    model_config = {'extra': 'forbid'}
+
+    limit: int = Field(14, gt=0, lt=100)
+    offset: int = Field(0, ge=0)
+    orfer_by: Literal['created_at', 'updated_at'] = 'created_at'
+    tags: list[str] = []
+
+
+@app.get('/items_4/')
+async def read_items_4(
+    filter_query: Annotated[
+        FilterParams,
+        Query()
+    ]
+):
+    return filter_query
