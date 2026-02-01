@@ -1,5 +1,5 @@
 from typing import Annotated, Literal
-from fastapi import FastAPI, Query, Path
+from fastapi import FastAPI, Query, Path, Body
 from pydantic import BaseModel, AfterValidator, Field
 from enum import Enum
 import random
@@ -161,13 +161,18 @@ async def update_item(
         )
     ],
     user: User2,
-    item: Item | None = None
+    item: Annotated[Item, Body(embed=True)],
+    importance: Annotated[int, Body(gt=0)],
+    q: str | None = None
 ):
     results = {
         'item_id_up': item_id,
         'item woolie': item,
-        'user': user
+        'user': user,
+        'importantce my woolie': importance
     }
+    if q:
+        results.update({'q woolie': q})
     return results
 
 
