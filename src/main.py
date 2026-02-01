@@ -30,14 +30,6 @@ class EmployeeUpdate(BaseModel):
     country: str
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: bool | None = None
-    description: str | None = None
-    tax: float | None = None
-
-
 class UserPublic(BaseModel):
     username: str
     email: str
@@ -145,12 +137,38 @@ async def read_items_2(
     return {'id': id, 'name': item}
 
 
+class Item(BaseModel):
+    name: str
+    price: float
+    is_offer: bool | None = None
+    description: str | None = None
+    tax: float | None = None
+
+
+class User2(BaseModel):
+    username: str
+    full_name: str | None = None
+
+
 @app.put("/items/{item_id}")
-async def update_item(item_id: int, item: Item):
-    return {
+async def update_item(
+    item_id: Annotated[
+        int,
+        Path(
+            title='The ID of the item to get my woolie',
+            ge=0,
+            le=10
+        )
+    ],
+    user: User2,
+    item: Item | None = None
+):
+    results = {
         'item_id_up': item_id,
-        **item.model_dump()
+        'item woolie': item,
+        'user': user
     }
+    return results
 
 
 class ModelName(str, Enum):
