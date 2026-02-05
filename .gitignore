@@ -1,4 +1,53 @@
+# ==========================================
+# 1. GLOBAL / OS FILES
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ==========================================
+# 2. PYTHON & FASTAPI (app/ folder)
+# ==========================================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .env
+.venv/
+env/
+venv/
+# If you ever create a local conda env inside the project
+.conda/
+# FastAPI/App specific
+*.log
+.pytest_cache/
+
+# ==========================================
+# 3. TERRAFORM (infrastructure/ folder)
+# ==========================================
+# Local .terraform directory (contains large provider binaries)
+**/.terraform/*
+
+# .tfstate files (CRITICAL: These contain secrets and plain-text data)
+*.tfstate
+*.tfstate.*
+
+# Secret variables (where you will store BigQuery keys)
+*.tfvars
+*.tfvars.json
+
+# ==========================================
+# 4. DBT (warehouse/ folder)
+# ==========================================
+# Artifacts generated during runs (safe to ignore as they are rebuilt)
+warehouse/target/
+warehouse/dbt_packages/
+warehouse/logs/
+# If you store your connection profile locally
+warehouse/profiles.yml
+
+# ==========================================
+# 5. RESEARCH (research/ folder)
+# ==========================================
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
