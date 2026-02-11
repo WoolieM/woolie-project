@@ -1,7 +1,7 @@
 variable "project_id" {
-  description = "Your Google Cloud Project ID"
+  description = "My GCP Project ID (must be unique across all of GCP)"
   type        = string
-  default     = "PASTE_YOUR_PROJECT_ID_HERE" 
+  default     = "woolie-project"
 }
 
 variable "region" {
@@ -11,5 +11,5 @@ variable "region" {
 
 variable "lake_location" {
   description = "The region for GCS Lake (US for Always Free Tier)"
-  default     = "US-CENTRAL1"
+  default     = "australia-southeast1"
 }
