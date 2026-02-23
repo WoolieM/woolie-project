@@ -15,12 +15,13 @@ dependencies:
   - terraform
   - google-cloud-storage
   - google-cloud-bigquery
-  - google-cloud-pubsub # New: For your streaming simulator
+  - google-cloud-pubsub #Streaming Simulator
   - google-cloud-sdk
   - dbt-bigquery
+  - dbt-core
   - pip:
     - fastapi[standard]
-    - httpx # New: For modern, async API calls (CoinGecko/Fuel)
-    - tenacity # New: For retry logic and circuit breakers
-    - dbt-databricks # New: To allow dbt to run transforms in Databricks
-    - databricks-sdk # New: For Databricks Asset Bundle (DAB) auth
+    - httpx # For modern, async API calls (CoinGecko/Fuel)
+    - tenacity # For retry logic and circuit breakers
+    - dbt-databricks # To allow dbt to run transforms in Databricks
+    - databricks-sdk # For Databricks Asset Bundle (DAB) auth
