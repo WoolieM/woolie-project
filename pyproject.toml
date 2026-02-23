@@ -1,0 +1,21 @@
+[build-system]
+# Tells Python how to "build" your code into a package
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# The "ID Card" for your project
+name = "woolie-project"
+version = "0.1.0"
+
+[tool.setuptools]
+# The "Map" that tells Python where your code folders are
+packages = ["app", "shared", "dbt_project"]
+
+[tool.pytest.ini_options]
+# Adds root to the path so 'import app' works
+pythonpath = ["."]
+# Handles 'async def' tests automatically
+asyncio_mode = "auto"
+# Required for Python 3.13+ to handle the event loop correctly
+asyncio_default_fixture_loop_scope = "function"

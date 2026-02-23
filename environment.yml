@@ -19,6 +19,7 @@ dependencies:
   - google-cloud-sdk
   - dbt-bigquery
   - dbt-core
+  - pytest-asyncio # For testing async code in FastAPI
   - pip:
     - fastapi[standard]
     - httpx # For modern, async API calls (CoinGecko/Fuel)
