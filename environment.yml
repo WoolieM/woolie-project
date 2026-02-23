@@ -6,14 +6,21 @@ dependencies:
   - python=3.13
   - pip
   - pytest
+  - pytest-mock # Essential for mocking API calls in tests
   - python-dotenv
   - pandas
+  - pyarrow # Required for efficient Parquet/GCS operations
   - sqlmodel
-  - ipykernel #Option only for test purpose
+  - ipykernel
   - terraform
   - google-cloud-storage
   - google-cloud-bigquery
-  - dbt-bigquery
+  - google-cloud-pubsub # New: For your streaming simulator
   - google-cloud-sdk
+  - dbt-bigquery
   - pip:
     - fastapi[standard]
+    - httpx # New: For modern, async API calls (CoinGecko/Fuel)
+    - tenacity # New: For retry logic and circuit breakers
+    - dbt-databricks # New: To allow dbt to run transforms in Databricks
+    - databricks-sdk # New: For Databricks Asset Bundle (DAB) auth

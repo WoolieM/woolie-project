@@ -27,17 +27,3 @@ resource "google_storage_bucket" "metadata" {
   name     = "${var.project_id}-metadata"
   location = var.lake_location
 }
-
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 6.0" # This pulls the latest stable 2026 version
-    }
-  }
-}
-
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
