@@ -9,7 +9,11 @@ class CoinGeckoClient:
     base_url: str = "https://api.coingecko.com/api/v3"
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
-    async def get_prices(self, coin_ids: str = "bitcoin,ethereum", currencies: str = "aud,usd"):
+    async def get_prices(
+        self,
+        coin_ids: str = "bitcoin,ethereum",
+        currencies: str = "aud,usd"
+    ) -> dict:
         """Fetches multiple coins and currencies in one handshake."""
         headers = {
             "x-cg-demo-api-key": self.api_key,
