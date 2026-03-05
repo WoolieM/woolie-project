@@ -5,24 +5,23 @@ channels:
 dependencies:
   - python=3.13
   - pip
-  - pytest
-  - pytest-mock # Essential for mocking API calls in tests
-  - python-dotenv
-  - pandas
-  - pyarrow # Required for efficient Parquet/GCS operations
-  - sqlmodel
   - ipykernel
-  - terraform
-  - google-cloud-storage
-  - google-cloud-bigquery
-  - google-cloud-pubsub #Streaming Simulator
-  - google-cloud-sdk
-  - dbt-bigquery
-  - dbt-core
-  - pytest-asyncio # For testing async code in FastAPI
+  - google-cloud-sdk  # Smart: Keeps Home WSL and VM in sync
   - pip:
-    - fastapi[standard]
-    - httpx # For modern, async API calls (CoinGecko/Fuel)
-    - tenacity # For retry logic and circuit breakers
-    - dbt-databricks # To allow dbt to run transforms in Databricks
-    - databricks-sdk # For Databricks Asset Bundle (DAB) auth
+      - python-dotenv
+      - pandas
+      - pyarrow
+      - sqlmodel
+      - google-cloud-storage
+      - google-cloud-bigquery
+      - google-cloud-pubsub
+      - dbt-bigquery
+      - dbt-core
+      - fastapi[standard]
+      - httpx
+      - tenacity
+      - dbt-databricks
+      - databricks-sdk
+      - pytest
+      - pytest-mock
+      - pytest-asyncio
