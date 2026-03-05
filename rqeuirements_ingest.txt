@@ -1,7 +1,0 @@
-# Connectivity & API
-httpx
-google-cloud-pubsub
-
-# Logic & Reliability
-tenacity
-python-dotenv

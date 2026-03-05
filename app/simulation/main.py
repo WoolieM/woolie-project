@@ -13,7 +13,7 @@ standard_retry = retry(
     stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=2, max=10),
     before_sleep=lambda retry_state: print(
-        f"Retrying... {retry_state.attempt_number}")
+        f"Retrying... {retry_state.attempt_number} | Error: {retry_state.outcome.exception()}")
 )
 
 

@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements_ingest.txt
 COPY app/ ./app/
 
 # Run the simulation script
-CMD ["python", "-m","app/simulation/main.py"]
+CMD ["python", "-m", "app.simulation.main"]
