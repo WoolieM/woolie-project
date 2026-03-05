@@ -5,14 +5,11 @@ variable "gcp_project_id" {
 }
 
 variable "gcp_region" {
-  description = "The region for BigQuery (Sydney)"
-  default     = "australia-southeast1"
+  description = "The primary region (Melbourne)"
+  default     = "australia-southeast2"
 }
 
-variable "lake_location" {
-  description = "The region for GCS Lake (US for Always Free Tier)"
-  default     = "australia-southeast1"
-}
+
 
 variable "databricks_region" {
   description = "The Processing Brain (Free Edition)"

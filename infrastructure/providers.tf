@@ -9,16 +9,21 @@ terraform {
       version = "~> 1.0"
     }
   }
+  backend "gcs" {
+    bucket  = "woolie-project-metadata"
+    prefix  = "terraform/state"
+  }
 }
 
-# GCP Provider - Locked to Sydney
+
 provider "google" {
   project = var.gcp_project_id
-  region  = "australia-southeast1"
+  region  = var.gcp_region
 }
 
 # Databricks Provider
 provider "databricks" {
-  host = var.databricks_host
+  host  = var.databricks_host
   token = var.databricks_token
 }
+

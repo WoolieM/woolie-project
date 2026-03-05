@@ -34,7 +34,6 @@ htmlcov/
 *.tfstate.*
 *.tfvars
 *.tfvars.json
-.terraform.lock.hcl
 
 # ==========================================
 # 4. DBT (dbt_project/ folder)
