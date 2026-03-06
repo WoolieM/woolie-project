@@ -10,8 +10,8 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket  = "woolie-project-metadata"
-    prefix  = "terraform/state"
+    bucket = "woolie-project-metadata"
+    prefix = "terraform/state"
   }
 }
 

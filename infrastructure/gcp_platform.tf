@@ -1,3 +1,10 @@
+# Enable Pub/Sub API
+resource "google_project_service" "pubsub_api" {
+  project            = var.gcp_project_id
+  service            = "pubsub.googleapis.com"
+  disable_on_destroy = false
+}
+
 # 1. THE LANDING ZONE (Bronze Lake)
 resource "google_storage_bucket" "woolie_lake" {
   name          = "${var.gcp_project_id}-lakehouse"
@@ -37,6 +44,8 @@ resource "google_pubsub_topic" "bitcoin_prices" {
     environment = "dev"
     data_source = "coingecko"
   }
+
+  depends_on = [google_project_service.pubsub_api]
 }
 
 # The Subscription (Ohio will "pull" from here)
