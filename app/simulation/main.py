@@ -40,10 +40,10 @@ async def run_ingestion():
 
     # 1. Strict Env Loading (No Hardcoding!)
     try:
-        api_key = os.environ["COINGECKO_API_KEY"]
-        project_id = os.environ["GCP_PROJECT_ID"]
-        topic_id = os.environ["GCP_PUB_SUB_TOPIC"]
-        app_env = os.environ["ENV"]
+        api_key = os.environ["COINGECKO_API_KEY"].strip()
+        project_id = os.environ["GCP_PROJECT_ID"].strip()
+        topic_id = os.environ["GCP_PUB_SUB_TOPIC"].strip()
+        app_env = os.environ["ENV"].strip()
     except KeyError as e:
         print(f"❌ Missing Environment Variable: {e}")
         return
