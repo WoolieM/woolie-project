@@ -2,6 +2,7 @@ import os
 import json
 import uuid
 import time
+import click
 from concurrent.futures import TimeoutError
 from google.cloud import pubsub_v1
 from dotenv import load_dotenv
@@ -9,7 +10,9 @@ from dotenv import load_dotenv
 # Load environment variables from .env
 load_dotenv()
 
-def run_smoke_test():
+@click.command()
+@click.option('--timeout', default=20, help='Seconds to wait for the smoke test message')
+def run_smoke_test(timeout):
     print("🕵️  Starting Pub/Sub Smoke Test...")
 
     # 1. Configuration
@@ -84,8 +87,8 @@ def run_smoke_test():
     # 5. Wait (Block) until received or timeout
     with subscriber:
         try:
-            # Wait up to 20 seconds
-            streaming_pull_future.result(timeout=20)
+            # Wait up to 'timeout' seconds
+            streaming_pull_future.result(timeout=timeout)
         except (TimeoutError, Exception):
             # If we cancelled it (success) or timed out (failure)
             if received_event:

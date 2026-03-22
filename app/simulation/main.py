@@ -1,5 +1,6 @@
 import asyncio
 import os
+import click
 from dotenv import load_dotenv
 import datetime
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -36,7 +37,7 @@ def publish_to_pubsub(producer: PubSubProducer, payload: dict):
     return producer.publish_message(payload)
 
 
-async def run_ingestion():
+async def run_ingestion(minutes: int):
 
     # 1. Strict Env Loading (No Hardcoding!)
     try:
@@ -52,8 +53,11 @@ async def run_ingestion():
     client = CoinGeckoClient(api_key)
     producer = PubSubProducer(project_id, topic_id)
 
-    while True:
+    print(f"🚀 Starting ingestion loop for {minutes} minutes...")
+
+    for i in range(minutes):
         try:
+            print(f"⏱️  Iteration {i + 1}/{minutes}")
             # 1. Fetch
             data = await fetch_data(client)
 
@@ -80,10 +84,23 @@ async def run_ingestion():
                 print(
                     f"✅ Published {coin}: {stats['aud']} AUD / {stats['usd']} USD (ID: {msg_id})")
 
-            await asyncio.sleep(60)  # Fetch every minute
+            # Only sleep if this isn't the last iteration
+            if i < minutes - 1:
+                await asyncio.sleep(60)
         except Exception as e:
             print(f"❌ Error: {e}")
-            await asyncio.sleep(10)
+            # Instead of just sleeping, consider if the error is "Fatal"
+            # For a Cloud Job, sometimes it's better to 'raise' the error
+            # so Google Cloud logs it as a 'Failed' execution rather than 'Success'.
+            if i < minutes - 1:
+                await asyncio.sleep(10)
+
+
+@click.command()
+@click.option('--minutes', default=5, help='Number of minutes to run the simulation')
+def main(minutes):
+    """Runs the simulation for a specific number of minutes."""
+    asyncio.run(run_ingestion(minutes))
 
 if __name__ == "__main__":
-    asyncio.run(run_ingestion())
+    main()

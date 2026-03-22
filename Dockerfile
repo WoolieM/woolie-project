@@ -18,5 +18,6 @@ RUN pip install --no-cache-dir -r requirements_ingest.txt
 COPY app/ ./app/
 
 # Run the simulation script
-# To run smoke test: docker run --rm --env-file .env bitcoin-ingest:dev python -m app.simulation.smoke_test
-CMD ["python", "-m", "app.simulation.main"]
+# To run smoke test: docker run --rm --env-file .env --entrypoint python bitcoin-ingest:dev -m app.simulation.smoke_test
+ENTRYPOINT ["python", "-m", "app.simulation.main"]
+CMD ["--minutes", "2"]

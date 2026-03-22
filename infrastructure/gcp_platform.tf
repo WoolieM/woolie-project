@@ -59,3 +59,19 @@ resource "google_pubsub_subscription" "bitcoin_sub" {
   # Keep unacknowledged messages for 7 days
   message_retention_duration = "604800s"
 }
+
+
+
+# Enable the Artifact Registry API automatically
+resource "google_project_service" "artifact_registry_api" {
+  service            = "artifactregistry.googleapis.com"
+  disable_on_destroy = false # Prevents accidentally locking yourself out
+}
+
+resource "google_artifact_registry_repository" "woolie_bitcoin_repo" {
+  location      = var.gcp_region
+  repository_id = "bitcoin-project-repo"
+  description   = "Registry for Bitcoin Ingestion Images"
+  format        = "Docker"
+  depends_on    = [google_project_service.artifact_registry_api]
+}
