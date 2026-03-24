@@ -17,6 +17,10 @@ RUN pip install --no-cache-dir -r requirements_ingest.txt
 # This keeps the image small and excludes dbt_project/notebooks
 COPY app/ ./app/
 
+# Security best practice: Run as a non-root user
+RUN useradd -m appuser
+USER appuser
+
 # Run the simulation script
 # To run smoke test: docker run --rm --env-file .env --entrypoint python bitcoin-ingest:dev -m app.simulation.smoke_test
 ENTRYPOINT ["python", "-m", "app.simulation.main"]

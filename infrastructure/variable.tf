@@ -32,3 +32,33 @@ variable "databricks_workspace_id" {
   type        = string
   description = "The ID found after ?o= in your browser URL"
 }
+
+variable "pubsub_topic_name" {
+  description = "The name of the Pub/Sub topic for ingestion"
+  type        = string
+  default     = "bitcoin-price-topic"
+}
+
+variable "app_env" {
+  description = "Application Environment (dev, test, or prod)"
+  type        = string
+  default     = "dev"
+}
+
+variable "image_tag" {
+  description = "The Docker image tag to deploy"
+  type        = string
+  default     = "dev" # Change this to "v2" or "prod" when ready
+}
+
+variable "ingestion_minutes" {
+  description = "How long the ingestion loop runs (default 5 for budget safety)"
+  type        = string # Cloud Run args are passed as strings
+  default     = "5"
+}
+
+variable "coingecko_api_key" {
+  description = "CoinGecko API Key - Marked sensitive so it won't show in logs"
+  type        = string
+  sensitive   = true
+}

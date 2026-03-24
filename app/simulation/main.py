@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 import click
 from dotenv import load_dotenv
 import datetime
@@ -47,7 +48,8 @@ async def run_ingestion(minutes: int):
         app_env = os.environ["ENV"].strip()
     except KeyError as e:
         print(f"❌ Missing Environment Variable: {e}")
-        return
+        # Exit with error code so Cloud Run marks the job as Failed
+        sys.exit(1)
 
     # Setup
     client = CoinGeckoClient(api_key)
@@ -94,6 +96,9 @@ async def run_ingestion(minutes: int):
             # so Google Cloud logs it as a 'Failed' execution rather than 'Success'.
             if i < minutes - 1:
                 await asyncio.sleep(10)
+            else:
+                # Raise on the final attempt to ensure the job fails loudly in GCP
+                raise
 
 
 @click.command()
