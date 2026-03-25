@@ -21,7 +21,6 @@ dependencies:
       - httpx
       - tenacity
       - dbt-databricks
-      - databricks-sdk
       - pytest
       - pytest-mock
       - pytest-asyncio
