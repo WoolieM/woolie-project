@@ -12,7 +12,9 @@ resources:
         - task_key: "notebook_task"
           # These lines must be perfectly aligned under task_key
           notebook_task:
-            notebook_path: "/Users/wooliterchen@gmail.com/Test"
+            # notebook_path: "/Users/wooliterchen@gmail.com/Test"
+            notebook_path: "./notebooks/databricks_playground/test.ipynb"
+          
 
 # This defines environment (Dev vs Prod)
 targets:
