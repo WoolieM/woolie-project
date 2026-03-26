@@ -1,23 +1,27 @@
 bundle:
   name: woolie-data-platform
+  databricks_cli_version: ">= 0.287.0"
+
+# Include all YAML files in subfolders of resources
+include:
+  - resources/infrastructure/catalogs.yml
+  - resources/jobs/streaming_jobs.yml
+
 
 workspace:
   host: https://dbc-df535374-cdf8.cloud.databricks.com
 
-resources:
-  jobs:
-    run_test_notebook:
-      name: "My-First-Serverless-Test"
-      tasks:
-        - task_key: "notebook_task"
-          # These lines must be perfectly aligned under task_key
-          notebook_task:
-            # notebook_path: "/Users/wooliterchen@gmail.com/Test"
-            notebook_path: "./notebooks/databricks_playground/test.ipynb"
-          
-
-# This defines environment (Dev vs Prod)
 targets:
   dev:
     default: true
     mode: development
+
+  test:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}

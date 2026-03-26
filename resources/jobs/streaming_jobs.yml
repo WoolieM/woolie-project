@@ -1,0 +1,13 @@
+resources:
+  jobs:
+    # This is the "nickname" for your job in the bundle
+    woolie_playground_job:
+      name: "[${bundle.target}] Woolie Playground Job"
+      tasks:
+        - task_key: write_to_sandbox
+          notebook_task:
+            # Path is relative to this YAML file
+            notebook_path: "../../notebooks/databricks_playground/test.ipynb"
+            base_parameters:
+              catalog_name: ${resources.catalogs.woolie_catalog.name}
+
