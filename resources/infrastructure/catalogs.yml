@@ -1,32 +1,21 @@
 resources:
-  catalogs:
-    woolie_catalog:
-      name: ${bundle.target}
-      comment: "Main catalog for the ${bundle.target} environment"
-      
-      grants:
-        - principal: "data_engineers"
-          privileges:
-            - USE_CATALOG    
-            - CREATE_SCHEMA
-
   schemas:
     braze_schema:
       name: braze
-      catalog_name: ${resources.catalogs.woolie_catalog.name}
+      catalog_name: ${bundle.target}
       comment: "Raw ingestion layer for ${bundle.target}"
 
     silver_schema:
       name: silver
-      catalog_name: ${resources.catalogs.woolie_catalog.name}
+      catalog_name: ${bundle.target}
       comment: "Cleaned and modeled layer for ${bundle.target}"
 
     gold_schema:
       name: gold
-      catalog_name: ${resources.catalogs.woolie_catalog.name}
+      catalog_name: ${bundle.target}
       comment: "Business-ready reporting layer for ${bundle.target}"
     
     sandbox_schema:
       name: sandbox
-      catalog_name: ${resources.catalogs.woolie_catalog.name}
+      catalog_name: ${bundle.target}
       comment: "Test Data and play around and exploration for basic data exploration"

@@ -9,5 +9,4 @@ resources:
             # Path is relative to this YAML file
             notebook_path: "../../notebooks/databricks_playground/test.ipynb"
             base_parameters:
-              catalog_name: ${resources.catalogs.woolie_catalog.name}
-
+              catalog_name: ${bundle.target}
