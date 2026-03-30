@@ -3,11 +3,11 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.11
+  - python=3.12
   - pip
   - ipykernel
   - pip:
-      - databricks-connect==15.4.*
+      - databricks-connect==18.1
       - databricks-sdk
       - python-dotenv
       - pandas

@@ -15,15 +15,13 @@ terraform {
   }
 }
 
-
 provider "google" {
   project = var.gcp_project_id
   region  = var.gcp_region
 }
 
-# Databricks Provider
+# Standard Databricks Provider using your PAT
 provider "databricks" {
   host  = var.databricks_host
   token = var.databricks_token
 }
-

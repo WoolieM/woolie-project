@@ -9,8 +9,10 @@ include:
 
 
 workspace:
-  host: https://dbc-df535374-cdf8.cloud.databricks.com
-
+  # Free Edition 
+  # host: https://dbc-df535374-cdf8.cloud.databricks.com
+  # GCP Databricks
+  host: https://8259557353875275.5.gcp.databricks.com
 targets:
   dev:
     default: true
