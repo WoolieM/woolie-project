@@ -7,8 +7,8 @@ dependencies:
   - pip
   - ipykernel
   - pip:
-      - databricks-connect==18.1
-      - databricks-sdk
+      # This exact version tells Serverless to wake up "Version 5"
+      - databricks-connect==18.0.* - databricks-sdk
       - python-dotenv
       - pandas
       - pyarrow
