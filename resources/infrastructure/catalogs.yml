@@ -1,7 +1,7 @@
 resources:
   schemas:
-    braze_schema:
-      name: braze
+    bronze_schema:
+      name: bronze
       catalog_name: ${bundle.target}
       comment: "Raw ingestion layer for ${bundle.target}"
 
@@ -19,3 +19,11 @@ resources:
       name: sandbox
       catalog_name: ${bundle.target}
       comment: "Test Data and play around and exploration for basic data exploration"
+
+  volumes:
+      checkpoint_volume:
+        name: checkpoints
+        catalog_name: ${bundle.target}
+        schema_name: ${resources.schemas.bronze_schema.name}
+        volume_type: MANAGED
+        comment: "Storage for streaming checkpoints"
