@@ -30,7 +30,7 @@ resource "databricks_secret_scope" "gcp_credentials" {
 
 # 6. Inject the JSON key securely into Databricks
 resource "databricks_secret" "sa_key_secret" {
-  key          = "databricks-workspace-sa-json"
+  key = "databricks-workspace-sa-json"
   # The key is base64 encoded by GCP, so we decode it before saving to Databricks
   string_value = base64decode(google_service_account_key.databricks_sa_key.private_key)
   scope        = databricks_secret_scope.gcp_credentials.name
