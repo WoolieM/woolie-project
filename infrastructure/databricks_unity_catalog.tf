@@ -35,7 +35,8 @@ resource "databricks_catalog" "envs" {
   # The Catalog's "Managed" root folder.
   storage_root = "gs://${google_storage_bucket.woolie_lake.name}/${each.value}/managed"
 
-  force_destroy = true
+  # Protect production data from being accidentally destroyed
+  force_destroy = each.value != "prd"
 
   # Wait for the bucket to be authorized via External Location first
   depends_on = [databricks_external_location.lakehouse_location]

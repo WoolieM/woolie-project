@@ -1,9 +1,11 @@
 # dbt/dbt_project.yml
 
 name: 'woolie_data_platform'
-version: '1.0.0'
+version: '2.0.0'
 config-version: 2
-
+require-dbt-version: '>=1.11.0'
+flags:
+  use_managed_iceberg: true
 # This must match the name we used in profiles.yml
 profile: 'woolie_data_platform'
 
@@ -41,4 +43,8 @@ models:
 # For your small reference CSVs (like currency codes)
 seeds:
   woolie_data_platform:
-    +schema: intermediate
+    +schema: bronze
+
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['dbt_project_evaluator', 'dbt']

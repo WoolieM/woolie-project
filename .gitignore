@@ -39,12 +39,13 @@ htmlcov/
 # 4. DBT (dbt_project/ folder)
 # ==========================================
 # Updated paths to reflect your new 'dbt_project' folder
-dbt_project/target/
-dbt_project/dbt_packages/
-dbt_project/logs/
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
 # Keep your credentials out of Git!
-dbt_project/profiles.yml
-
+dbt/profiles.yml
+dbt/.user.yml
+dbt/dbt_packages/
 # ==========================================
 # 5. DATABRICKS & WORKFLOWS (app/workflows/)
 # ==========================================
@@ -65,3 +66,4 @@ app/workflows/bundle.lock.yml
 *.jsonl
 # Your playground notebook checkpoints
 notebook/.ipynb_checkpoints/
+

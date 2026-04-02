@@ -35,3 +35,30 @@ resource "databricks_secret" "sa_key_secret" {
   string_value = base64decode(google_service_account_key.databricks_sa_key.private_key)
   scope        = databricks_secret_scope.gcp_credentials.name
 }
+
+
+# The "Engine" for dbt - Serverless starts in < 10 seconds
+resource "databricks_sql_endpoint" "dbt_warehouse" {
+  name           = "woolie-serverless"
+  cluster_size   = "2X-Small" # Smallest is usually plenty for dbt logic
+  auto_stop_mins = 10         # Serverless stops fast, saving money
+
+  enable_serverless_compute = true
+  warehouse_type            = "PRO" # Required for Serverless
+
+  tags {
+    custom_tags {
+      key   = "Owner"
+      value = "Woolie"
+    }
+  }
+}
+
+# Export the connection details for your dbt profile
+output "dbt_http_path" {
+  value = databricks_sql_endpoint.dbt_warehouse.odbc_params[0].path
+}
+
+output "dbt_hostname" {
+  value = var.databricks_host
+}
