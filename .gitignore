@@ -34,7 +34,8 @@ htmlcov/
 *.tfstate.*
 *.tfvars
 *.tfvars.json
-
+crash.log
+crash.*.log
 # ==========================================
 # 4. DBT (dbt_project/ folder)
 # ==========================================
@@ -45,7 +46,7 @@ dbt/logs/
 # Keep your credentials out of Git!
 dbt/profiles.yml
 dbt/.user.yml
-dbt/dbt_packages/
+
 # ==========================================
 # 5. DATABRICKS & WORKFLOWS (app/workflows/)
 # ==========================================
@@ -65,5 +66,6 @@ app/workflows/bundle.lock.yml
 *.parquet
 *.jsonl
 # Your playground notebook checkpoints
-notebook/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 
