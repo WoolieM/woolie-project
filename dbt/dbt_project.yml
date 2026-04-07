@@ -1,0 +1,50 @@
+# dbt/dbt_project.yml
+
+name: 'woolie_data_platform'
+version: '2.0.0'
+config-version: 2
+require-dbt-version: '>=1.11.0'
+flags:
+  use_managed_iceberg: true
+# This must match the name we used in profiles.yml
+profile: 'woolie_data_platform'
+
+# Directory configuration
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Clean up the target folder on every run
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# --- MODEL CONFIGURATIONS ---
+# This is where we define the "Medallion" behavior
+models:
+  woolie_data_platform:
+    # 1. Silver Layer: Incremental processing for efficiency
+    silver:
+      +schema: silver
+      +materialized: incremental
+      +incremental_strategy: merge
+      +file_format: delta
+    
+    # 2. Gold Layer: Final tables for Power BI
+    gold:
+      +schema: gold
+      +materialized: table
+      +file_format: delta
+
+# --- SEED CONFIGURATIONS ---
+# For your small reference CSVs (like currency codes)
+seeds:
+  woolie_data_platform:
+    +schema: bronze
+
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['dbt_project_evaluator', 'dbt']

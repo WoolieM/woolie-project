@@ -1,0 +1,27 @@
+resources:
+  jobs:
+    # This is the "nickname" for your job in the bundle
+    woolie_playground_job:
+      name: "[${bundle.target}] Woolie Playground Job"
+      tasks:
+        - task_key: write_to_sandbox
+          notebook_task:
+            # Path is relative to this YAML file
+            notebook_path: "../../notebooks/databricks_playground/test.ipynb"
+            base_parameters:
+              catalog_name: ${bundle.target}
+
+    woolie_streaming_job:
+          name: "[${bundle.target}] Woolie Bitcoin Streaming Job"
+          environments:
+            - environment_key: 'streaming'
+              spec: 
+                environment_version: "5"
+                dependencies:
+                  - "google-cloud-pubsub"
+                  - "google-auth"
+          tasks:
+            - task_key: ingest_bitcoin
+              environment_key: 'streaming'
+              spark_python_task:
+                python_file: "../../pipelines/ingestion/streaming/pubsub_to_bronze.py"

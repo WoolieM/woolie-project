@@ -1,14 +1,27 @@
-name: fastapi-env
+name: woolie-platform-env
 channels:
   - conda-forge
   - defaults
 dependencies:
   - python=3.13
   - pip
-  - pytest
-  - python-dotenv
-  - pandas
-  - sqlmodel
-  - ipykernel #Option only for test purpose
+  - ipykernel
+  - google-cloud-sdk  # Smart: Keeps Home WSL and VM in sync
   - pip:
-    - fastapi[standard]
+      - python-dotenv
+      - pandas
+      - pyarrow
+      - sqlmodel
+      - google-cloud-storage
+      - google-cloud-bigquery
+      - google-cloud-pubsub
+      - dbt-bigquery
+      - dbt-core
+      - fastapi[standard]
+      - httpx
+      - tenacity
+      - dbt-databricks
+      - pytest
+      - pytest-mock
+      - pytest-asyncio
+      - click

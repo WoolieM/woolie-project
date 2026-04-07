@@ -1,4 +1,71 @@
-__pycache__/
-*.pyc
+# ==========================================
+# 1. GLOBAL / OS / IDE
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# ==========================================
+# 2. PYTHON & ENVIRONMENT
+# ==========================================
+**/__pycache__/
+*.py[cod]
+*$py.class
 .env
+.venv/
+env/
+venv/
+.conda/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+# Ignore locally installed 'shared' library metadata
+*.egg-info/
+
+# ==========================================
+# 3. TERRAFORM (infrastructure/ folder)
+# ==========================================
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+# ==========================================
+# 4. DBT (dbt_project/ folder)
+# ==========================================
+# Updated paths to reflect your new 'dbt_project' folder
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+# Keep your credentials out of Git!
+dbt/profiles.yml
+dbt/.user.yml
+
+# ==========================================
+# 5. DATABRICKS & WORKFLOWS (app/workflows/)
+# ==========================================
+# Ignore local DAB deployment state and secrets
+app/workflows/.databricks/
+app/workflows/bundle.lock.yml
+# If you use local dev secrets for the Databricks SDK
+.databricks.cfg
+
+# ==========================================
+# 6. DATA & RESEARCH (notebook/ & local data)
+# ==========================================
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+# Prevent accidentally committing large data files to Git
+*.csv
+*.parquet
+*.jsonl
+# Your playground notebook checkpoints
+notebooks/.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+

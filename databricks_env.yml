@@ -1,0 +1,15 @@
+name: woolie-databricks
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - ipykernel
+  - pip:
+      # This exact version tells Serverless to wake up "Version 5"
+      - databricks-connect==18.0.* - databricks-sdk
+      - python-dotenv
+      - pandas
+      - pyarrow
+      - dbt-databricks

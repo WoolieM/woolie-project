@@ -1,0 +1,37 @@
+resources:
+  schemas:
+    bronze_schema:
+      name: bronze
+      catalog_name: ${bundle.target}
+      # THIS IS THE AUTO-BINDING MAGIC:
+      # Automatically routes all Bronze tables to: gs://your-bucket/[dev|test|prd]/bronze/
+      storage_root: gs://woolie-project-lakehouse/${bundle.target}/bronze/
+      comment: "Raw ingestion layer backed by GCP Bucket for ${bundle.target}"
+
+    silver_schema:
+      name: silver
+      catalog_name: ${bundle.target}
+      # No storage_root = Databricks native Managed Storage
+      comment: "Cleaned layer (Managed Storage) for ${bundle.target}"
+
+    gold_schema:
+      name: gold
+      catalog_name: ${bundle.target}
+      # No storage_root = Databricks native Managed Storage
+      comment: "Reporting layer (Managed Storage) for ${bundle.target}"
+    
+    sandbox_schema:
+      name: sandbox
+      catalog_name: ${bundle.target}
+      # No storage_root = Databricks native Managed Storage
+      comment: "Test Data and basic exploration"
+
+  volumes:
+      checkpoint_volume:
+        name: checkpoints
+        catalog_name: ${bundle.target}
+        schema_name: ${resources.schemas.bronze_schema.name}
+        volume_type: EXTERNAL
+        # Checkpoints need a specific physical path in GCP to avoid locking issues
+        storage_location: gs://woolie-project-lakehouse/${bundle.target}/bronze/_checkpoints/
+        comment: "Storage for streaming checkpoints in GCP"
