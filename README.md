@@ -54,6 +54,7 @@ graph LR
     style Gold fill:#dfd,stroke:#333
     style TF fill:#ace,stroke:#333,stroke-width:2px
     style DAB fill:#afa,stroke:#333,stroke-width:1px
+```
 
 🛠️ Technology Stack & Responsibilities
 Data Ingestion (GCP): A Python producer fetches live data from a REST API and publishes payloads to Cloud Pub/Sub for decoupled, high-throughput messaging.
@@ -111,4 +112,3 @@ Integrate a BI tool (like Power BI) directly to the Gold layer for real-time das
 
 ✉️ Contact
 Wooliter Chen Data Engineer
-
