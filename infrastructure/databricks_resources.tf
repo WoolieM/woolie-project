@@ -39,7 +39,7 @@ resource "databricks_secret" "sa_key_secret" {
 
 # The "Engine" for dbt - Serverless starts in < 10 seconds
 resource "databricks_sql_endpoint" "dbt_warehouse" {
-  name           = "woolie-serverless"
+  name           = "Woolie Serverless"
   cluster_size   = "2X-Small" # Smallest is usually plenty for dbt logic
   auto_stop_mins = 10         # Serverless stops fast, saving money
 
