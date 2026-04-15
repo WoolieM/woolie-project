@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: "External tables registered in Unity Catalog via Spark ingestion"
+    # This dynamically pulls 'dev', 'test', or 'prd' from your profiles.yml
+    database: "{{ target.catalog }}" 
+    schema: bronze
+    tables:
+      # --- Existing Streaming Source ---
+      - name: bitcoin_prices
+        description: "Streaming data from CoinGecko API"
+        tests:
+          - dbt_utils.recency:
+              arguments:
+                datepart: hour
+                interval: 1
+                field: _ingested_at
+
+      # --- Future Batch Source ---
+      # - name: transaction_header
+      #   description: "Batch uploaded transaction headers from GCP bucket"
