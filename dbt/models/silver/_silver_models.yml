@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: stg_bitcoin_prices
+    description: >
+      Cleaned and flattened Bitcoin price data from CoinGecko. 
+      Includes both USD and AUD prices for localized Australian reporting.
+    columns:
+      - name: primary_key
+        description: "Primary key from GCP Pub/Sub message. This is a combination key: message_id + currency"
+        tests:
+          - unique
+          - not_null
+
+      - name: asset
+        description: "The name of the cryptocurrency (e.g., bitcoin)."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['bitcoin', 'ethereum']
+
+      - name: price
+        description: "Price in local currency."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                # Adding a realistic upper bound for Bitcoin in 2026
+                max_value: 500000 
+
+      - name: currency
+        description: "Local Currency"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['AUD', 'USD']
+                
+      - name: event_time_aest
+        description: "The timestamp from the original CoinGecko API response. and convert to Melbourne time"
+        tests:
+          - not_null
+
+      - name: _ingested_at_utc
+        description: "Timestamp when the record was processed by Spark and written to Bronze. in UTC time"
+        tests:
+          - not_null
