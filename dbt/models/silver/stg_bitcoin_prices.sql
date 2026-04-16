@@ -24,7 +24,6 @@ WITH source AS (
         _ingested_at > (SELECT MAX(_ingested_at_utc) FROM {{ this }})
     {% endif %}
 ),
-
 parsed_json AS (
     SELECT
         message_id,
@@ -62,7 +61,6 @@ unpivoted AS (
     FROM
         parsed_json
 )
-
 
 SELECT
     CONCAT(message_id, currency) AS primary_key,
