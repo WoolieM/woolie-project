@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fact_bitcoin_daily_summary
+    description: >
+      Daily aggregated fact table for cryptocurrency prices. 
+      This is the final reporting layer designed for direct consumption by Power BI or Tableau.
+      Grouped by localized Melbourne trade date, asset, and currency.
+    
+    # Use data_tests for dbt 1.11
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "daily_high >= daily_low"
+
+    columns:
+      - name: daily_summary_pk
+        description: "Primary Key: Hash of trade_date, asset, and currency."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: trade_date
+        description: "The localized trading date (Melbourne time)."
+        data_tests:
+          - not_null
+
+      - name: asset
+        description: "The name of the cryptocurrency."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['bitcoin', 'ethereum']
+
+      - name: currency
+        description: "The fiat currency the price is denominated in."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['AUD', 'USD']
+
+      - name: daily_open
+        description: "The first price recorded on this trade_date."
+        data_tests:
+          - not_null
+
+      - name: daily_close
+        description: "The last price recorded on this trade_date."
+        data_tests:
+          - not_null
+
+      - name: tick_count
+        description: "Audit metric: The number of API updates."
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
