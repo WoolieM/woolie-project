@@ -11,8 +11,12 @@ WITH silver_data AS (
     
     {% if is_incremental() %}
     -- 1. Look back 1 day to catch late-arriving updates near midnight
-    WHERE DATE(event_time_aest) >= (
-        SELECT DATE_ADD(MAX(trade_date), -1) FROM {{ this }}
+    WHERE 
+        DATE(event_time_aest) >= (
+            SELECT 
+                DATE_ADD(MAX(trade_date), -1) 
+            FROM 
+                {{ this }}
     )
     {% endif %}
 ),

@@ -3,9 +3,16 @@ bundle:
   # databricks_cli_version: ">= 0.287.0"
   engine: direct
 
+variables:
+  catalog_name:
+    description: "The default catalog for the current deployment target"
+  dbt_warehouse_id:
+      description: "The ID of the SQL Warehouse managed by Terraform"
+
 include:
   - resources/infrastructure/catalogs.yml
   - resources/jobs/streaming_jobs.yml
+  - resources/jobs/dbt_jobs.yml
 
 
 workspace:
@@ -16,15 +23,22 @@ workspace:
 targets:
   dev:
     default: true
+    variables:
+      catalog_name: dev
+      dbt_warehouse_id: "e81ba8f63bd36643"
     workspace:
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
 
   test:
     mode: production
+    variables:
+      catalog_name: test
     workspace:
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
 
-  prod:
+  prd:
     mode: production
+    variables:
+      catalog_name: prd
     workspace:
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
