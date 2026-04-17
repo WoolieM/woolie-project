@@ -1,6 +1,6 @@
 resources:
   jobs:
-    # This is the "nickname" for your job in the bundle
+    # This is the "nickname" for my job in the bundle
     woolie_playground_job:
       name: "[${bundle.target}] Woolie Playground Job"
       tasks:

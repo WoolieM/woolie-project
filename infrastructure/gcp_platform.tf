@@ -102,6 +102,7 @@ resource "google_project_service" "cloudrun_api" {
 }
 
 resource "google_cloud_run_v2_job" "woolie_bitcoin_ingest_job" {
+                        #The actual name  in GCP
   name                = "woolie-bitcoin-ingest-${var.app_env}"
   location            = var.gcp_region
   deletion_protection = false
@@ -114,13 +115,13 @@ resource "google_cloud_run_v2_job" "woolie_bitcoin_ingest_job" {
 
   template {
     template {
-      # Explicitly attach your dedicated service account here
+      # Explicitly attach dedicated service account here
       service_account = google_service_account.ingest_sa.email
       containers {
-        # Point to the image you just pushed!
+        # Point to the image I just pushed!
         image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.woolie_bitcoin_repo.repository_id}/bitcoin-ingest:${var.image_tag}"
 
-        # This is where your 'click' options come in
+        # This is where my 'click' options come in
         args = ["--minutes", var.ingestion_minutes]
 
         env {

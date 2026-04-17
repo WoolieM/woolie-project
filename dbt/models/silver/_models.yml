@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_bitcoin_prices
+  - name: int_bitcoin_prices
     description: >
       Cleaned and flattened Bitcoin price data from CoinGecko. 
       Includes both USD and AUD prices for localized Australian reporting.

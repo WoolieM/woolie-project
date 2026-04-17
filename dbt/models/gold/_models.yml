@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: fact_bitcoin_daily_summary
+  - name: fct_bitcoin_daily_summary
     description: >
       Daily aggregated fact table for cryptocurrency prices. 
       This is the final reporting layer designed for direct consumption by Power BI or Tableau.

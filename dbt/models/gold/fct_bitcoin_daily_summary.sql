@@ -7,7 +7,7 @@ WITH silver_data AS (
     SELECT 
         *
     FROM 
-        {{ ref('stg_bitcoin_prices') }}
+        {{ ref('int_bitcoin_prices') }}
     
     {% if is_incremental() %}
     -- 1. Look back 1 day to catch late-arriving updates near midnight

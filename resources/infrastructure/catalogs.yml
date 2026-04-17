@@ -26,6 +26,12 @@ resources:
       # No storage_root = Databricks native Managed Storage
       comment: "Test Data and basic exploration"
 
+    audit_schema:
+      name: audit
+      catalog_name: ${bundle.target}
+      comment: "Audit and metadata layer for ${bundle.target} (dbt_project_evaluator)"
+    
+
   volumes:
       checkpoint_volume:
         name: checkpoints

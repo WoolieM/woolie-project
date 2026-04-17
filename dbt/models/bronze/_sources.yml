@@ -6,6 +6,16 @@ sources:
     # This dynamically pulls 'dev', 'test', or 'prd' from your profiles.yml
     database: "{{ target.catalog }}" 
     schema: bronze
+
+
+    config:
+      freshness:
+        warn_after: {count: 12, period: hour}
+        error_after: {count: 24, period: hour}
+      loaded_at_field: _ingested_at
+
+
+
     tables:
       # --- Existing Streaming Source ---
       - name: bitcoin_prices
