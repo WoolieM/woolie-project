@@ -7,12 +7,16 @@ WITH silver_data AS (
     SELECT 
         *
     FROM 
-        {{ ref('stg_bitcoin_prices') }}
+        {{ ref('int_bitcoin_prices') }}
     
     {% if is_incremental() %}
     -- 1. Look back 1 day to catch late-arriving updates near midnight
-    WHERE DATE(event_time_aest) >= (
-        SELECT DATE_ADD(MAX(trade_date), -1) FROM {{ this }}
+    WHERE 
+        DATE(event_time_aest) >= (
+            SELECT 
+                DATE_ADD(MAX(trade_date), -1) 
+            FROM 
+                {{ this }}
     )
     {% endif %}
 ),

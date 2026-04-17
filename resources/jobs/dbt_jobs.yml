@@ -1,0 +1,38 @@
+resources:
+  jobs:
+    dbt_daily_refresh:
+      name: "[${bundle.target}] Bitcoin Price Daily Pipeline"
+      
+      # Schedule for 2 AM Melbourne time. 
+      # This gives the CoinGecko API time to settle daily closing prices.
+      schedule:
+        quartz_cron_expression: "0 0 2 * * ?"
+        timezone_id: Australia/Melbourne
+        pause_status: PAUSED 
+
+      environments:
+        - environment_key: 'dbt_cli_env'
+          spec:
+            environment_version: "5"
+            dependencies:
+              - "dbt-databricks>=1.8.0"
+
+      tasks:
+        - task_key: run_dbt_build
+          environment_key: 'dbt_cli_env'
+          dbt_task:
+            warehouse_id: ${var.dbt_warehouse_id}
+            catalog: ${var.catalog_name}
+            schema: gold
+            commands:
+              - "dbt deps"  # Installs dbt_utils and dbt_expectations
+              # - "dbt seed"
+              - "dbt build" # Builds and tests Silver & Gold in order
+            
+            # Points to the folder containing your dbt_project.yml
+            project_directory: ../../dbt 
+
+      # Best practice: Add a tag to track GCP costs for this specific job
+      tags:
+        Layer: Gold
+        Owner: Woolie

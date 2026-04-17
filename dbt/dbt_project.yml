@@ -16,7 +16,7 @@ profile: 'woolie_data_platform'
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
-# seed-paths: ["seeds"]
+seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
@@ -39,15 +39,33 @@ models:
     # 2. Gold Layer: Final tables for Power BI
     gold:
       +schema: gold
-      +materialized: table
+      +materialized: incremental
       +file_format: delta
 
-# --- SEED CONFIGURATIONS ---
-# For your small reference CSVs (like currency codes)
+  # --- PACKAGE CONFIGURATIONS ---
+  # This moves the audit views out of 'gold' and into 'audit'
+  dbt_project_evaluator:
+    +schema: audit
+    marts:
+      dag:
+        fct_marts_or_intermediate_dependent_on_source:
+          +enabled: false
+
+  
 seeds:
-  woolie_data_platform:
-    +schema: bronze
+  dbt_project_evaluator:
+    +schema: audit
+
 
 dispatch:
   - macro_namespace: dbt
     search_order: ['dbt_project_evaluator', 'dbt']
+
+vars:
+  dbt_project_evaluator:
+    # Tell the evaluator which folders correspond to which prefixes
+    staging_directories: ['silver']
+    intermediate_directories: ['silver']
+    marts_directories: ['gold']
+    documentation_coverage_target: 10
+    test_coverage_target: 10
