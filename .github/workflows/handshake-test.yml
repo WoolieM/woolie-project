@@ -1,0 +1,40 @@
+name: Cloud Handshake Test (GCP Only)
+
+on:
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
+
+permissions:
+  contents: read
+  id-token: write # CRITICAL: This allows GitHub to request the OIDC token from GCP
+
+jobs:
+  gcp-handshake:
+    name: Test GCP Connection
+    runs-on: ubuntu-latest
+    # This environment target pulls the specific GCP_WIF_SERVICE_ACCOUNT for 'dev'
+    environment: dev 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          # These come from your Terraform-managed GitHub variables
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: 'Verify Identity & Project Access'
+        run: |
+          echo "--- Checking Identity ---"
+          gcloud auth list
+          
+          echo "--- Checking Project Access ---"
+          # This proves the SA actually has permissions inside the project
+          gcloud config set project ${{ vars.GCP_PROJECT_ID }}
+          gcloud storage buckets list --limit=1
+          
+          echo "Handshake Successful for Environment: dev"

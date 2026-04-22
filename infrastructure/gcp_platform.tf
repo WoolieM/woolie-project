@@ -102,7 +102,7 @@ resource "google_project_service" "cloudrun_api" {
 }
 
 resource "google_cloud_run_v2_job" "woolie_bitcoin_ingest_job" {
-                        #The actual name  in GCP
+  #The actual name  in GCP
   name                = "woolie-bitcoin-ingest-${var.app_env}"
   location            = var.gcp_region
   deletion_protection = false
