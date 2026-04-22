@@ -84,7 +84,7 @@ resource "github_actions_environment_variable" "gcp_wif_sa" {
   variable_name = "GCP_WIF_SERVICE_ACCOUNT"
 
   # This dynamically picks the correct SA from the map we created above
-  value         = google_service_account.env_sas[each.key].email
+  value = google_service_account.env_sas[each.key].email
 }
 
 
@@ -100,8 +100,8 @@ resource "google_artifact_registry_repository_iam_member" "github_pusher" {
 # 2. Allow GitHub to update/deploy Cloud Run jobs
 resource "google_project_iam_member" "github_run_admin" {
   for_each = toset(local.environments)
-  project = var.gcp_project_id
-  role    = "roles/run.admin"
+  project  = var.gcp_project_id
+  role     = "roles/run.admin"
   member   = "serviceAccount:${google_service_account.env_sas[each.key].email}"
 }
 

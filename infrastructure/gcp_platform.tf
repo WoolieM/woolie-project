@@ -209,3 +209,13 @@ resource "google_storage_bucket_iam_member" "admin_access" {
   role   = "roles/storage.admin"
   member = "user:wooliterchen@gmail.com"
 }
+
+
+# This is the specific API required for Workload Identity Federation
+resource "google_project_service" "woolie_iam_credentials" {
+  project = var.gcp_project_id
+  service = "iamcredentials.googleapis.com"
+
+  # Recommended: Don't disable the service when destroy the resource
+  disable_on_destroy = false
+}
