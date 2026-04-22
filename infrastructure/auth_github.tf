@@ -114,3 +114,12 @@ resource "google_service_account_iam_member" "github_sa_user" {
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_service_account.env_sas[each.key].email}"
 }
+
+
+# Allow the GitHub SAs to manage the Data Lake (GCS)
+resource "google_project_iam_member" "github_storage_admin" {
+  for_each = toset(local.environments)
+  project  = var.gcp_project_id
+  role     = "roles/storage.admin" # Or "roles/viewer" if you only want to list
+  member   = "serviceAccount:${google_service_account.env_sas[each.key].email}"
+}

@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     # This environment target pulls the specific GCP_WIF_SERVICE_ACCOUNT for 'dev'
     environment: dev 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
