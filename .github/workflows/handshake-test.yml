@@ -2,6 +2,10 @@ name: Cloud Handshake Test (GCP Only)
 
 on:
   workflow_dispatch: # Allows you to run this manually from the Actions tab
+  push:
+    branches:
+      - main
+      - 'feature/**'
 
 permissions:
   contents: read
@@ -22,7 +26,7 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v2'
         with:
-          # These come from your Terraform-managed GitHub variables
+          # These come from Terraform-managed GitHub variables
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
