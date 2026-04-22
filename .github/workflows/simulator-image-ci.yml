@@ -1,0 +1,50 @@
+name: Build & Register Simulator
+
+on:
+  push:
+    branches: [ main, 'feature/**' ]
+    paths:
+      - 'app/simulation/**'
+      - 'Dockerfile'
+      - 'requirements_ingest.txt'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: woolie-project
+  REGION: australia-southeast1 # Melbourne
+  REPOSITORY: simulator-repo   # Your GAR Repository name
+  IMAGE_NAME: bitcoin-ingest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Authenticate to GCP using WIF
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+
+      # 2. Configure Docker to use GCP Registry
+      - name: Docker Auth
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      # 3. Build and Push with multiple tags
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:test
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

@@ -62,3 +62,10 @@ variable "coingecko_api_key" {
   type        = string
   sensitive   = true
 }
+
+
+# Git Hub Repo
+variable "github_repository" {
+  description = "The GitHub repository in the format 'username/repo-name'"
+  type        = string
+}

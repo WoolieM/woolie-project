@@ -8,7 +8,13 @@ terraform {
       source  = "databricks/databricks"
       version = "~> 1.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
   }
+
+  # This stores My 'memory' in the cloud
   backend "gcs" {
     bucket = "woolie-project-metadata"
     prefix = "terraform/state"
@@ -24,4 +30,9 @@ provider "google" {
 provider "databricks" {
   host  = var.databricks_host
   token = var.databricks_token
+}
+
+provider "github" {
+  # Dynamically extracts 'WoolieM' from 'WoolieM/woolie-project'
+  owner = split("/", var.github_repository)[0]
 }

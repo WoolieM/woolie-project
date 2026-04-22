@@ -102,7 +102,7 @@ resource "google_project_service" "cloudrun_api" {
 }
 
 resource "google_cloud_run_v2_job" "woolie_bitcoin_ingest_job" {
-                        #The actual name  in GCP
+  #The actual name  in GCP
   name                = "woolie-bitcoin-ingest-${var.app_env}"
   location            = var.gcp_region
   deletion_protection = false
@@ -208,4 +208,14 @@ resource "google_storage_bucket_iam_member" "admin_access" {
   bucket = google_storage_bucket.metadata.name
   role   = "roles/storage.admin"
   member = "user:wooliterchen@gmail.com"
+}
+
+
+# This is the specific API required for Workload Identity Federation
+resource "google_project_service" "woolie_iam_credentials" {
+  project = var.gcp_project_id
+  service = "iamcredentials.googleapis.com"
+
+  # Recommended: Don't disable the service when destroy the resource
+  disable_on_destroy = false
 }
