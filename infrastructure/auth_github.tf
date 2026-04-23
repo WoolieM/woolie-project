@@ -65,7 +65,9 @@ resource "github_repository_environment" "env" {
 resource "github_actions_variable" "global_configs" {
   for_each = tomap({
     "GCP_PROJECT_ID"   = var.gcp_project_id
+    "GCP_REGION"       = var.gcp_region
     "GCP_WIF_PROVIDER" = google_iam_workload_identity_pool_provider.github_provider.name
+    "GAR_REPOSITORY"   = google_artifact_registry_repository.woolie_bitcoin_repo.repository_id
   })
 
   repository    = local.repo_name
@@ -129,4 +131,14 @@ resource "github_actions_secret" "databricks_token" {
   repository      = local.repo_name
   secret_name     = "DATABRICKS_TOKEN"
   plaintext_value = var.databricks_token
+}
+
+
+# Injects "dev", "test", or "prd" into each environment context
+resource "github_actions_environment_variable" "env_tag" {
+  for_each      = toset(local.environments)
+  repository    = local.repo_name
+  environment   = github_repository_environment.env[each.key].environment
+  variable_name = "ENV"
+  value         = each.key # This will be 'dev', 'test', or 'prd'
 }
