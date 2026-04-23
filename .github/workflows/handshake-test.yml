@@ -64,5 +64,5 @@ jobs:
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
           
-          echo "Handshake Successful for Databricks in Environment: dev"
+          echo "Handshake Successful for Databricks"
     
