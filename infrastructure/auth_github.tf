@@ -123,3 +123,10 @@ resource "google_project_iam_member" "github_storage_admin" {
   role     = "roles/storage.admin" # Or "roles/viewer" if you only want to list
   member   = "serviceAccount:${google_service_account.env_sas[each.key].email}"
 }
+
+# --- REPOSITORY LEVEL SECRETS ---
+resource "github_actions_secret" "databricks_token" {
+  repository      = local.repo_name
+  secret_name     = "DATABRICKS_TOKEN"
+  plaintext_value = var.databricks_token
+}
