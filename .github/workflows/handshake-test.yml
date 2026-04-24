@@ -60,7 +60,7 @@ jobs:
         with:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'
+
 
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
@@ -68,8 +68,8 @@ jobs:
       - name: Verify Databricks Connection
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ steps.auth.outputs.access_token }}
-
+          DATABRICKS_AUTH_TYPE: google-credentials
+          DATABRICKS_GOOGLE_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
         run: |
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
