@@ -1,4 +1,4 @@
-name: Cloud Handshake Test (GCP Only)
+name: Cloud Handshake Test Databricks and GCP
 
 on:
   push:
@@ -45,24 +45,34 @@ jobs:
   databricks-handshake:
     name: Test Databricks Connection
     runs-on: ubuntu-latest
-    environment: dev 
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write 
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 1. Authenticate to GCP and request an ID Token for Databricks
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          # THE MAGIC LINE: This tells GCP to generate a token Databricks trusts
+          token_format: 'id_token'
+          id_token_audience: https://databricks.google.com/
+          id_token_include_email: true
 
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
 
       - name: Verify Databricks Connection
         env:
-          # Expected to be configured in GitHub Actions Environment secrets & vars
-          # If using M2M OAuth, replace TOKEN with DATABRICKS_CLIENT_ID and DATABRICKS_CLIENT_SECRET
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          # The CLI is smart—it will automatically find the token from the 'auth' step
         run: |
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
-          
-          echo "Handshake Successful for Databricks"
-    
+          echo "Handshake Successful using Tokenless Identity!"
