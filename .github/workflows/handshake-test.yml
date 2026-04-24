@@ -71,6 +71,7 @@ jobs:
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_AUTH_TYPE: google-credentials
+          DATABRICKS_GOOGLE_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
           
         run: |
           echo "--- Checking Databricks Identity ---"
