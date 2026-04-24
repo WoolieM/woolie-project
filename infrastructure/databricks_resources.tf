@@ -64,30 +64,31 @@ output "dbt_hostname" {
 }
 
 
-
 # =====================================================================
-# 7. REGISTER GITHUB ACTIONS AS DATABRICKS SERVICE PRINCIPALS
+# 7. REGISTER GCP SERVICE ACCOUNTS AS DATABRICKS "USERS"
 # =====================================================================
 
-# This maps 3 GCP SAs (dev, test, prd) as "users" in Databricks
-resource "databricks_service_principal" "github_actions" {
-  for_each       = toset(["dev", "test", "prd"])
+resource "databricks_user" "github_actions" {
+  for_each  = toset(["dev", "test", "prd"])
   
-  # Reference the SAs created in auth_github.tf
-  application_id = google_service_account.env_sas[each.key].email
-  display_name   = "GitHub Actions (${each.key})"
+  # Use user_name for the email address
+  user_name    = google_service_account.env_sas[each.key].email
+  display_name = "GitHub Actions (${each.key})"
+  
+  workspace_access      = true
+  databricks_sql_access = true
 }
 
-# Allow the GitHub SAs to use your new "Woolie Serverless" Warehouse
+# Grant Permissions to the Warehouse
 resource "databricks_permissions" "warehouse_usage" {
   sql_endpoint_id = databricks_sql_endpoint.dbt_warehouse.id
 
-  # Grant 'CAN_USE' to all 3 environments
   dynamic "access_control" {
     for_each = toset(["dev", "test", "prd"])
     content {
-      service_principal_name = databricks_service_principal.github_actions[access_control.key].application_id
-      permission_level       = "CAN_USE"
+      # Use user_name here as well
+      user_name        = databricks_user.github_actions[access_control.key].user_name
+      permission_level = "CAN_USE"
     }
   }
 }

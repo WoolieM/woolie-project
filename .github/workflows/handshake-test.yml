@@ -60,16 +60,17 @@ jobs:
         with:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          token_format: 'id_token'
+          id_token_audience: https://databricks.google.com/
+          id_token_include_email: true
 
-
-      - name: Setup Databricks CLI
-        uses: databricks/setup-cli@main
+      # - name: Setup Databricks CLI
+      #   uses: databricks/setup-cli@main
 
       - name: Verify Databricks Connection
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: github-oidc
-          DATABRICKS_CLIENT_ID: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          DATABRICKS_AUTH_TYPE: goole-id
           
         run: |
           echo "--- Checking Databricks Identity ---"
