@@ -51,7 +51,7 @@ jobs:
       id-token: write 
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       # 1. Authenticate to GCP and request an ID Token for Databricks
@@ -70,7 +70,7 @@ jobs:
       - name: Verify Databricks Connection
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: google-credentails
+          DATABRICKS_AUTH_TYPE: google-credentials
           
         run: |
           echo "--- Checking Databricks Identity ---"
