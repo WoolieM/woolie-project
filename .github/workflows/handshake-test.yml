@@ -71,7 +71,7 @@ jobs:
       - name: Verify Databricks Connection
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          # The CLI is smart—it will automatically find the token from the 'auth' step
+          DATABRICKS_TOKEN: ${{ steps.auth.outputs.id_token }}
         run: |
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
