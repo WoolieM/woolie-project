@@ -2,7 +2,9 @@ name: Build & Register Simulator
 
 on:
   push:
-    branches: [ main, 'feature/**' ]
+    branches:
+      - main
+      - feature/**
     paths:
       - 'app/simulation/**'
       - 'Dockerfile'
