@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/**
+      - 'feature/**'
     paths:
       - 'app/simulation/**'
       - 'Dockerfile'
