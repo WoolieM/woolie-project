@@ -2,7 +2,6 @@ import json
 from google.cloud import pubsub_v1
 import dataclasses
 
-
 @dataclasses.dataclass
 class PubSubProducer:
     project_id: str
