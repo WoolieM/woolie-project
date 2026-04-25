@@ -13,7 +13,6 @@ permissions:
 jobs:
   gcp-handshake:
     name: Test GCP Connection
-    if: false
     runs-on: ubuntu-latest
     # This environment target pulls the specific GCP_WIF_SERVICE_ACCOUNT for 'dev'
     environment: dev 
