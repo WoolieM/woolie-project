@@ -13,6 +13,7 @@ permissions:
 jobs:
   gcp-handshake:
     name: Test GCP Connection
+    if: false
     runs-on: ubuntu-latest
     # This environment target pulls the specific GCP_WIF_SERVICE_ACCOUNT for 'dev'
     environment: dev 
@@ -48,19 +49,11 @@ jobs:
     environment: dev
     permissions:
       contents: read
-      id-token: write 
+      id-token: write # CRITICAL: Allows GitHub to generate the OIDC token
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # 1. Authenticate to GCP and request an ID Token for Databricks
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
-          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
-
 
       - name: Setup Databricks CLI
         uses: databricks/setup-cli@main
@@ -68,9 +61,11 @@ jobs:
       - name: Verify Databricks Connection
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_AUTH_TYPE: google-credentials
-          DATABRICKS_GOOGLE_SERVICE_ACCOUNT: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+          # 1. Tell the CLI to use the official GitHub integration
+          DATABRICKS_AUTH_TYPE: github-oidc
+          # 2. Pass the UUID we got from Terraform
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
         run: |
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
-          echo "Handshake Successful using Tokenless Identity!"
+          echo "Handshake Successful using Official Databricks OIDC!"

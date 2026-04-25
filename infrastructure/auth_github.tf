@@ -126,12 +126,13 @@ resource "google_project_iam_member" "github_storage_admin" {
   member   = "serviceAccount:${google_service_account.env_sas[each.key].email}"
 }
 
-# --- REPOSITORY LEVEL SECRETS ---
-resource "github_actions_secret" "databricks_token" {
-  repository      = local.repo_name
-  secret_name     = "DATABRICKS_TOKEN"
-  plaintext_value = var.databricks_token
-}
+# --- REPOSITORY LEVEL SECRETS --- 
+# No more Token
+# resource "github_actions_secret" "databricks_token" {
+#   repository      = local.repo_name
+#   secret_name     = "DATABRICKS_TOKEN"
+#   plaintext_value = var.databricks_token
+# }
 
 
 # Injects "dev", "test", or "prd" into each environment context
@@ -141,4 +142,16 @@ resource "github_actions_environment_variable" "env_tag" {
   environment   = github_repository_environment.env[each.key].environment
   variable_name = "ENV"
   value         = each.key # This will be 'dev', 'test', or 'prd'
+}
+
+
+# Injects the specific Databricks Service Principal UUID into dev, test, and prd
+resource "github_actions_environment_variable" "databricks_client_id" {
+  for_each      = toset(local.environments)
+  repository    = local.repo_name
+  environment   = github_repository_environment.env[each.key].environment
+  variable_name = "DATABRICKS_CLIENT_ID"
+
+  # This magically pulls the UUID generated in databricks_resources.tf!
+  value = databricks_service_principal.github_actions[each.key].application_id
 }
