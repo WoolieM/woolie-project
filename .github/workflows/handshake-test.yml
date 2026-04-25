@@ -1,4 +1,4 @@
-name: Cloud Handshake Test (GCP Only)
+name: Cloud Handshake Test Databricks and GCP
 
 on:
   push:
@@ -45,10 +45,13 @@ jobs:
   databricks-handshake:
     name: Test Databricks Connection
     runs-on: ubuntu-latest
-    environment: dev 
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write # CRITICAL: Allows GitHub to generate the OIDC token
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Databricks CLI
@@ -56,13 +59,12 @@ jobs:
 
       - name: Verify Databricks Connection
         env:
-          # Expected to be configured in GitHub Actions Environment secrets & vars
-          # If using M2M OAuth, replace TOKEN with DATABRICKS_CLIENT_ID and DATABRICKS_CLIENT_SECRET
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          # 1. Tell the CLI to use the official GitHub integration
+          DATABRICKS_AUTH_TYPE: github-oidc
+          # 2. Pass the UUID we got from Terraform
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
         run: |
           echo "--- Checking Databricks Identity ---"
           databricks current-user me
-          
-          echo "Handshake Successful for Databricks"
-    
+          echo "Handshake Successful using Official Databricks OIDC!"

@@ -62,3 +62,51 @@ output "dbt_http_path" {
 output "dbt_hostname" {
   value = var.databricks_host
 }
+
+# =====================================================================
+# 7. REGISTER DATABRICKS-NATIVE SERVICE PRINCIPALS (For GitHub OIDC)
+# =====================================================================
+
+# 1. Create native Service Principals 
+# We DO NOT provide an email address here. Databricks will generate a UUID.
+resource "databricks_service_principal" "github_actions" {
+  for_each = toset(["dev", "test", "prd"])
+
+  display_name          = "GitHub Actions (${each.key})"
+  workspace_access      = true
+  databricks_sql_access = true
+}
+
+# 2. Grant Permissions to the Warehouse
+resource "databricks_permissions" "warehouse_usage" {
+  sql_endpoint_id = databricks_sql_endpoint.dbt_warehouse.id
+
+  dynamic "access_control" {
+    for_each = toset(["dev", "test", "prd"])
+    content {
+      # We use application_id (the Databricks UUID) instead of the GCP email
+      service_principal_name = databricks_service_principal.github_actions[access_control.key].application_id
+      permission_level       = "CAN_USE"
+    }
+  }
+}
+
+# =====================================================================
+# 8. OUTPUTS FOR GITHUB & ACCOUNT CONSOLE
+# =====================================================================
+# You need these UUIDs to set up the trust in the Databricks Account Console!
+
+output "github_client_id_dev" {
+  value       = databricks_service_principal.github_actions["dev"].application_id
+  description = "UUID for GitHub Actions Dev Environment"
+}
+
+output "github_client_id_test" {
+  value       = databricks_service_principal.github_actions["test"].application_id
+  description = "UUID for GitHub Actions Test Environment"
+}
+
+output "github_client_id_prd" {
+  value       = databricks_service_principal.github_actions["prd"].application_id
+  description = "UUID for GitHub Actions Prd Environment"
+}

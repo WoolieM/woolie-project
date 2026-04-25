@@ -10,11 +10,11 @@ variable "gcp_region" {
 }
 
 
-
-variable "databricks_region" {
-  description = "The Processing Brain (Free Edition)"
-  default     = "us-east-2" # US East (Ohio)
-}
+# Temp Comment out currently using GCP Databricks
+# variable "databricks_region" {
+#   description = "The Processing Brain (Free Edition)"
+#   default     = "us-east-2" # US East (Ohio)
+# }
 
 variable "databricks_host" {
   type        = string
