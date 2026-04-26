@@ -9,6 +9,7 @@ on:
       - 'app/simulation/**'
       - 'Dockerfile'
       - 'requirements_ingest.txt'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,6 +36,7 @@ jobs:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
+          token_format: 'access_token'
 
       # 2. Configure Docker Auth
       - name: Docker Auth
