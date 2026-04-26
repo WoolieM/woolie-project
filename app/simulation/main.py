@@ -101,6 +101,7 @@ async def run_ingestion(minutes: int):
                 raise
 
 
+
 @click.command()
 @click.option('--minutes', default=5, help='Number of minutes to run the simulation')
 def main(minutes):

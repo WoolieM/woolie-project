@@ -52,7 +52,7 @@ jobs:
         with:
           context: .
           push: true
+          # All these now pull dynamically from your Terraform variables
           tags: |
-            # All these now pull dynamically from your Terraform variables
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ vars.ENV }}
