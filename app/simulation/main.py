@@ -100,6 +100,7 @@ async def run_ingestion(minutes: int):
                 # Raise on the final attempt to ensure the job fails loudly in GCP
                 raise
 
+
 @click.command()
 @click.option('--minutes', default=5, help='Number of minutes to run the simulation')
 def main(minutes):
