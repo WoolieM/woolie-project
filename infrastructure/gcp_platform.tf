@@ -50,7 +50,6 @@ resource "google_pubsub_topic" "bitcoin_prices" {
   depends_on = [google_project_service.pubsub_api]
 }
 
-# The Subscription (Ohio will "pull" from here)
 resource "google_pubsub_subscription" "bitcoin_sub" {
   name  = "bitcoin-price-sub"
   topic = google_pubsub_topic.bitcoin_prices.name
@@ -84,11 +83,18 @@ resource "google_artifact_registry_repository" "woolie_bitcoin_repo" {
     }
   }
   cleanup_policies {
-    id     = "delete-untagged"
+    id     = "delete-old-garbage"
     action = "DELETE"
     condition {
-      tag_state  = "UNTAGGED"
-      older_than = "86400s" #1 day in seconds
+      tag_state  = "ANY"
+      older_than = "604800s" #7 day in seconds
+    }
+  }
+  cleanup_policies {
+    id     = "keep-latest-5"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 5
     }
   }
 }
