@@ -9,6 +9,7 @@ on:
       - 'app/simulation/**'
       - 'Dockerfile'
       - 'requirements_ingest.txt'
+      - 'tests/unit/**'
   workflow_dispatch:
 
 permissions:
@@ -27,6 +28,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements_ingest.txt
+          pip install pytest pytest-asyncio respx pytest-mock
+
+      - name: Run Unit Tests
+        run: |
+          export ENV=dev
+          pytest tests/unit/
 
       # 1. Authenticate to GCP using WIF
       - id: 'auth'
@@ -56,3 +74,23 @@ jobs:
           tags: |
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ vars.ENV }}
+
+  # CD
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-and-push] 
+    if: github.ref == 'refs/heads/main'
+    environment: test
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+
+      - name: Update Cloud Run Job
+        run: |
+          gcloud run jobs deploy woolie-bitcoin-ingest-${{ vars.ENV }} \
+            --image ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ vars.GCP_REGION }} \
+            --service-account="bitcoin-ingest-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
