@@ -155,3 +155,10 @@ resource "github_actions_environment_variable" "databricks_client_id" {
   # This magically pulls the UUID generated in databricks_resources.tf!
   value = databricks_service_principal.github_actions[each.key].application_id
 }
+
+
+resource "github_actions_variable" "pubsub_config" {
+  repository    = local.repo_name
+  variable_name = "GCP_PUB_SUB_TOPIC"
+  value         = google_pubsub_topic.bitcoin_prices.name # Points to your single topic
+}
