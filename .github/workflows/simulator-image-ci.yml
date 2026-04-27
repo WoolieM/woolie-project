@@ -94,3 +94,5 @@ jobs:
             --image ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region ${{ vars.GCP_REGION }} \
             --service-account="bitcoin-ingest-sa@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+            --set-secrets="COINGECKO_API_KEY=coingecko-api-key:latest" \
+            --set-env-vars="ENV=${{ vars.ENV }},GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }},GCP_PUB_SUB_TOPIC=${{ vars.GCP_PUB_SUB_TOPIC }}"
