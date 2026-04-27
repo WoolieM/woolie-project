@@ -13,7 +13,6 @@ BASE_URL = "https://api.coingecko.com/api/v3"
 
 # 3. Add Senior-level Retry Logic (stops after 3 fails)
 
-
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 async def get_bitcoin_price():
     # Per the CoinGecko email: Use the header for the demo key

@@ -2,11 +2,14 @@ name: Build & Register Simulator
 
 on:
   push:
-    branches: [ main, 'feature/**' ]
+    branches:
+      - main
+      - 'feature/**'
     paths:
       - 'app/simulation/**'
       - 'Dockerfile'
       - 'requirements_ingest.txt'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,6 +36,7 @@ jobs:
           workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
           service_account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
           project_id: ${{ vars.GCP_PROJECT_ID }}
+          token_format: 'access_token'
 
       # 2. Configure Docker Auth
       - name: Docker Auth
@@ -48,7 +52,7 @@ jobs:
         with:
           context: .
           push: true
+          # All these now pull dynamically from your Terraform variables
           tags: |
-            # All these now pull dynamically from your Terraform variables
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ vars.ENV }}
