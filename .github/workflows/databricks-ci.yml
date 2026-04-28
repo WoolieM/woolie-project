@@ -1,0 +1,83 @@
+name: "Databricks Bundle CI/CD"
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Global Environment Variables for OIDC
+env:
+  DATABRICKS_AUTH_TYPE: github-oidc
+
+jobs:
+  # --- STAGE 1: VALIDATE (Runs every time) ---
+  validate:
+    name: "1. Validate Bundle"
+    runs-on: ubuntu-latest
+    environment: dev # Added environment to access dev vars
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      
+      - name: Validate
+        run: databricks bundle validate -t dev
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+
+  # --- STAGE 2: DEV (Runs every time: PRs and Merges) ---
+  deploy-dev:
+    name: "2. Deploy & Smoke Test (Dev)"
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      
+      - name: Deploy to Dev
+        run: databricks bundle deploy -t dev
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+
+      - name: Run Ingestion Smoke Test
+        run: |
+            echo "Start Steaming"
+            databricks bundle run -t dev bitcoin_ingestion_job
+            echo "Start dbt"
+            databricks bundle run -t dev dbt_daily_refresh
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+
+  # --- STAGE 3: TEST (Runs ONLY on merge to main) ---
+  deploy-test:
+    name: "3. Promote to Test"
+    needs: deploy-dev
+    # CRITICAL: This 'if' ensures it only runs when code actually hits main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: test
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      
+      - name: Deploy to Test
+        run: databricks bundle deploy -t test
+        env:
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
