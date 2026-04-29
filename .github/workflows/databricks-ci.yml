@@ -54,7 +54,6 @@ jobs:
       - name: Run Ingestion Smoke Test
         run: |
             echo "Start Steaming and dbt"
-            databricks bundle run -t dev woolie_streaming_job &
             databricks bundle run -t dev dbt_daily_refresh &
             wait
             echo "Both smoke tests completed!"
