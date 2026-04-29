@@ -36,6 +36,23 @@ resource "databricks_secret" "sa_key_secret" {
   scope        = databricks_secret_scope.gcp_credentials.name
 }
 
+# =====================================================================
+# 6.5. GRANT SECRET ACCESS TO SERVICE PRINCIPALS
+# =====================================================================
+resource "databricks_secret_acl" "sp_secret_access" {
+  # Loop through all environments to give each SP access
+  for_each = toset(["dev", "test", "prd"])
+
+  # Point to the application_id of the Service Principal
+  principal  = databricks_service_principal.github_actions[each.key].application_id
+  
+  # Point to the secret scope you created earlier
+  scope      = databricks_secret_scope.gcp_credentials.name
+  
+  # READ is exactly what Spark needs to fetch the token during runtime
+  permission = "READ" 
+}
+
 
 # The "Engine" for dbt - Serverless starts in < 10 seconds
 resource "databricks_sql_endpoint" "dbt_warehouse" {
@@ -62,7 +79,6 @@ output "dbt_http_path" {
 output "dbt_hostname" {
   value = var.databricks_host
 }
-
 # =====================================================================
 # 7. REGISTER DATABRICKS-NATIVE SERVICE PRINCIPALS (For GitHub OIDC)
 # =====================================================================

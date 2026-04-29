@@ -1,3 +1,4 @@
+## this script is no longer need , infrastructure is managed by terraform now
 resources:
   schemas:
     bronze_schema:
