@@ -10,7 +10,6 @@ variables:
       description: "The ID of the SQL Warehouse managed by Terraform"
 
 include:
-  - resources/infrastructure/catalogs.yml
   - resources/jobs/streaming_jobs.yml
   - resources/jobs/dbt_jobs.yml
 
