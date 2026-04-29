@@ -2,6 +2,9 @@ resources:
   jobs:
     dbt_daily_refresh:
       name: "[${bundle.target}] Bitcoin Price Daily Pipeline"
+      permissions:
+        - level: CAN_MANAGE
+          user_name: wooliterchen@gmail.com
       
       # Schedule for 2 AM Melbourne time. 
       # This gives the CoinGecko API time to settle daily closing prices.

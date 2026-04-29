@@ -55,8 +55,11 @@ def run_ingestion():
     )
 
     # 6. Write Stream
-    checkpoint_path = f"/Volumes/{env}/bronze/checkpoints/bitcoin_prices"
+    checkpoint_path = f"gs://woolie-project-lakehouse/{env}/bronze/_checkpoints/bitcoin_prices"
     table_name = f"{env}.bronze.bitcoin_prices"
+
+    # This ensures the DATA also lives in bucket, not just the checkpoint
+    data_path = f"gs://woolie-project-lakehouse/{env}/bronze/bitcoin_prices"
 
     query = (
         df_bronze.writeStream
@@ -64,12 +67,12 @@ def run_ingestion():
         .outputMode("append")
         .trigger(availableNow=True) # "Sips" all available data and stops
         .option("checkpointLocation", checkpoint_path)
+        .option("path", data_path)
         .toTable(table_name)
     )
 
     query.awaitTermination()
     print("✅ Ingestion complete.")
 
-# --- THE SENIOR ENTRY POINT ---
 if __name__ == "__main__":
     run_ingestion()

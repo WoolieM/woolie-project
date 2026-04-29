@@ -49,6 +49,18 @@ resource "databricks_grants" "location_grants" {
     principal  = "wooliterchen@gmail.com"
     privileges = ["ALL_PRIVILEGES"]
   }
+  
+# 2. Dynamic loop for GitHub Actions CI/CD access
+  dynamic "grant" {
+    # Loops through ["dev", "test", "prd"]
+    for_each = toset(var.environments) 
+    
+    content {
+      # grant.key represents the current environment in the loop
+      principal  = databricks_service_principal.github_actions[grant.key].application_id
+      privileges = ["CREATE_EXTERNAL_TABLE", "CREATE_EXTERNAL_VOLUME", "READ_FILES", "WRITE_FILES"]
+    }
+  }
 }
 
 resource "databricks_grants" "catalog_grants" {
@@ -56,6 +68,10 @@ resource "databricks_grants" "catalog_grants" {
   catalog  = databricks_catalog.envs[each.value].name
   grant {
     principal  = "wooliterchen@gmail.com"
+    privileges = ["ALL_PRIVILEGES"]
+  }
+  grant {
+    principal = databricks_service_principal.github_actions[each.value].application_id
     privileges = ["ALL_PRIVILEGES"]
   }
 }
