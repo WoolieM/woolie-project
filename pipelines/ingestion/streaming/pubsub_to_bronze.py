@@ -1,4 +1,4 @@
-import os, json
+import os, json, sys
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, current_timestamp
 from databricks.sdk.runtime import dbutils
@@ -21,7 +21,8 @@ def get_spark():
 
 def run_ingestion():
     spark = get_spark()
-    env = os.getenv("DATABRICKS_BUNDLE_TARGET", "dev")
+    
+    env = sys.argv[1] if len(sys.argv) > 1 else "dev"
 
     print(f"🚀 Starting Ingestion for environment: {env}")
 
