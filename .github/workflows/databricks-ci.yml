@@ -53,10 +53,11 @@ jobs:
 
       - name: Run Ingestion Smoke Test
         run: |
-            echo "Start Steaming"
-            databricks bundle run -t dev bitcoin_ingestion_job
-            echo "Start dbt"
-            databricks bundle run -t dev dbt_daily_refresh
+            echo "Start Steaming and dbt"
+            databricks bundle run -t dev bitcoin_ingestion_job &
+            databricks bundle run -t dev dbt_daily_refresh &
+            wait
+            echo "Both smoke tests completed!"
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
