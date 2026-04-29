@@ -5,7 +5,7 @@ resources:
       name: "[${bundle.target}] Woolie Playground Job"
       permissions:
         - level: CAN_MANAGE
-          user_name: woolieterchen@gmail.com
+          user_name: wooliterchen@gmail.com
       tasks:
         - task_key: write_to_sandbox
           notebook_task:
