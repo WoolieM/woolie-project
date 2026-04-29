@@ -18,7 +18,7 @@ resources:
       name: "[${bundle.target}] Woolie Bitcoin Streaming Job"
       permissions:
         - level: CAN_MANAGE
-          user_name: woolieterchen@gmail.com
+          user_name: wooliterchen@gmail.com
       environments:
         - environment_key: 'streaming'
           spec: 
