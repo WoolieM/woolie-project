@@ -32,6 +32,7 @@ targets:
     mode: production
     variables:
       catalog_name: test
+      dbt_warehouse_id: "e81ba8f63bd36643"
     workspace:
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
 
@@ -39,5 +40,6 @@ targets:
     mode: production
     variables:
       catalog_name: prd
+      dbt_warehouse_id: "e81ba8f63bd36643"
     workspace:
       root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
