@@ -31,3 +31,5 @@ resources:
           environment_key: 'streaming'
           spark_python_task:
             python_file: "../../pipelines/ingestion/streaming/pubsub_to_bronze.py"
+            parameters:
+              - ${bundle.target}
