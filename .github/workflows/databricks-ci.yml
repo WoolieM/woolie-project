@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    if: false
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
@@ -41,6 +42,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    if: false
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
@@ -66,12 +68,13 @@ jobs:
     name: "3. Promote to Test"
     needs: deploy-dev
     # CRITICAL: This 'if' ensures it only runs when code actually hits main
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') && false
     runs-on: ubuntu-latest
     environment: test
     permissions:
       contents: read
       id-token: write
+    
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
