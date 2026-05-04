@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.13
+  - python=3.14
   - pip
   - ipykernel
   - google-cloud-sdk  # Smart: Keeps Home WSL and VM in sync
@@ -20,8 +20,8 @@ dependencies:
       - fastapi[standard]
       - httpx
       - tenacity
-      - dbt-databricks
       - pytest
       - pytest-mock
       - pytest-asyncio
       - click
+      - dlt[duckdb,parquet]
