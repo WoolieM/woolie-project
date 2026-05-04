@@ -24,7 +24,7 @@ resource "databricks_external_location" "lakehouse_location" {
 # 4. Create the 3 Catalogs (Managed by Terraform)
 variable "environments" {
   type    = list(string)
-  default = ["dev", "test", "prd"]
+  default = ["local_dev", "dev", "test", "prd"]
 }
 
 resource "databricks_catalog" "envs" {
@@ -44,20 +44,27 @@ resource "databricks_catalog" "envs" {
 
 # 5. Grant yourself access to the catalogs and external location
 resource "databricks_grants" "location_grants" {
+  # If you have one location per env, keep your for_each here
+  # for_each = databricks_external_location.envs 
   external_location = databricks_external_location.lakehouse_location.id
+
+  # 1. Your manual access
   grant {
     principal  = "wooliterchen@gmail.com"
     privileges = ["ALL_PRIVILEGES"]
   }
-  
-# 2. Dynamic loop for GitHub Actions CI/CD access
+
+  # 2. Dynamic loop for GitHub Actions
   dynamic "grant" {
-    # Loops through ["dev", "test", "prd"]
-    for_each = toset(var.environments) 
-    
+    # Only iterate over SPs that exist AND match an environment in our list
+    for_each = {
+      for env, sp in databricks_service_principal.github_actions : 
+      env => sp if contains(var.environments, env) && env != "local_dev"
+    }
+
     content {
-      # grant.key represents the current environment in the loop
-      principal  = databricks_service_principal.github_actions[grant.key].application_id
+      # In this loop, 'grant.value' is the Service Principal object
+      principal  = grant.value.application_id
       privileges = ["CREATE_EXTERNAL_TABLE", "CREATE_EXTERNAL_VOLUME", "READ_FILES", "WRITE_FILES"]
     }
   }
@@ -70,8 +77,12 @@ resource "databricks_grants" "catalog_grants" {
     principal  = "wooliterchen@gmail.com"
     privileges = ["ALL_PRIVILEGES"]
   }
-  grant {
-    principal = databricks_service_principal.github_actions[each.value].application_id
-    privileges = ["ALL_PRIVILEGES"]
+  
+  dynamic "grant" {
+    for_each = contains(keys(databricks_service_principal.github_actions), each.value) ? [1] : []
+    content {
+      principal  = databricks_service_principal.github_actions[each.value].application_id
+      privileges = ["ALL_PRIVILEGES"]
+    }
   }
 }
