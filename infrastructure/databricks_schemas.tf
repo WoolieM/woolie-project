@@ -49,8 +49,8 @@ resource "databricks_volume" "streaming_checkpoints" {
   
   volume_type      = "EXTERNAL"
   # Placed adjacent to bronze to avoid UC overlap paths
-  storage_location = "gs://${google_storage_bucket.woolie_lake.name}/${each.value}/checkpoints"
-  comment          = "Storage for streaming checkpoints in GCP for ${each.value}"
+  storage_location = "gs://${google_storage_bucket.woolie_lake.name}/${each.value}/bronze/_checkpoints"
+  comment          = "Storage for streaming checkpoints in GCP for ${each.value}, aligned with application paths "
 }
 
 # =====================================================================
@@ -65,9 +65,12 @@ resource "databricks_grants" "schema_grants" {
     privileges = ["ALL_PRIVILEGES"]
   }
 
-  grant {
-    principal  = databricks_service_principal.github_actions[each.value.env].application_id
-    privileges = ["ALL_PRIVILEGES"]
+  dynamic "grant" {
+    for_each = contains(keys(databricks_service_principal.github_actions), each.value.env) ? [1] : []
+    content {
+      principal  = databricks_service_principal.github_actions[each.value.env].application_id
+      privileges = ["ALL_PRIVILEGES"]
+    }
   }
 }
 
@@ -80,8 +83,11 @@ resource "databricks_grants" "volume_grants" {
     privileges = ["ALL_PRIVILEGES"]
   }
 
-  grant {
-    principal  = databricks_service_principal.github_actions[each.value].application_id
-    privileges = ["ALL_PRIVILEGES"]
+  dynamic "grant" {
+    for_each = contains(keys(databricks_service_principal.github_actions), each.value) ? [1] : []
+    content {
+      principal  = databricks_service_principal.github_actions[each.value].application_id
+      privileges = ["ALL_PRIVILEGES"]
+    }
   }
 }

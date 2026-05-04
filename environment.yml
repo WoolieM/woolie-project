@@ -24,4 +24,5 @@ dependencies:
       - pytest-mock
       - pytest-asyncio
       - click
-      - dlt[duckdb,parquet]
+      - dlt[duckdb,parquet,gs]
+      - pyyaml

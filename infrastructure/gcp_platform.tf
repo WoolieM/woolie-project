@@ -225,3 +225,17 @@ resource "google_project_service" "woolie_iam_credentials" {
   # Recommended: Don't disable the service when destroy the resource
   disable_on_destroy = false
 }
+
+
+
+# Dedicated Service Account for the Melbourne API Ingestion VM
+resource "google_service_account" "woolie_vm" {
+  account_id   = "woolie-vm-sa"
+  display_name = "Service Account for Woolie to play around"
+}
+# Grant the VM Service Account access to the Bronze Lakehouse bucket
+resource "google_storage_bucket_iam_member" "woolie_vm_lakehouse_access" {
+  bucket = google_storage_bucket.woolie_lake.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.woolie_vm.email}"
+}
