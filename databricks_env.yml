@@ -13,3 +13,4 @@ dependencies:
       - pandas
       - pyarrow
       - dbt-databricks
+      - google-cloud-storage

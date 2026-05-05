@@ -25,4 +25,6 @@ dependencies:
       - pytest-asyncio
       - click
       - dlt[duckdb,parquet,gs]
+      - pyarrow
+      - deltalake
       - pyyaml

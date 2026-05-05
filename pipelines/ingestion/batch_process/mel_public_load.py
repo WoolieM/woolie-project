@@ -6,14 +6,16 @@ from dataclasses import dataclass
 from typing import Any, Optional
 from pathlib import Path
 from utils.utility import load_yml_config
+
+
 @dataclass
 class MelPublicAPI:
     
     pipeline_name: str = 'melbourne_city_data'
-    dataset_name: Optional[str] = "bronze"
+    dataset_name: Optional[str] = "dlt"
     env: str = 'local_dev'
     destination: str = "filesystem"
-    loader_file_format: str= "parquet"
+    table_format: str = "delta"
     base_url: str = "https://data.melbourne.vic.gov.au/api/explore/v2.1/"
 
     @property
@@ -23,7 +25,7 @@ class MelPublicAPI:
         Returns:
             str: The fully qualified GCS bucket URL (e.g., gs://woolie-project-lakehouse/dev).
         """
-        return f"gs://woolie-project-lakehouse/{self.env}"
+        return f"gs://woolie-project-lakehouse/{self.env}/bronze"
 
     def _build_config(
             self, 
@@ -81,6 +83,7 @@ class MelPublicAPI:
 
         dest = dlt.destinations.filesystem(bucket_url=self.bucket_url)
         # Using the same pipeline name ensures dlt reuses the state/connection
+
         pipeline = dlt.pipeline(
             pipeline_name=self.pipeline_name,
             destination=dest,
@@ -89,13 +92,11 @@ class MelPublicAPI:
         
         load_info = pipeline.run(
             data = source,
-            loader_file_format= self.loader_file_format,
+            table_format=self.table_format,
             write_disposition=write_disposition
         )
         print(f"Successfully loaded: {resource_name} to {self.env} layer")
         return load_info
-
-
 
 def main() -> None:
     """Main entry point for the Melbourne API batch ingestion pipeline.
@@ -109,7 +110,8 @@ def main() -> None:
 
     # 2. Initialize the API wrapper once
     mel_api = MelPublicAPI(
-        pipeline_name = config_data['pipeline_name']
+        pipeline_name = config_data['pipeline_name'],
+        base_url= config_data["base_url"]
     )
 
     # 3. Dynamically loop through resources

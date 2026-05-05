@@ -1,0 +1,52 @@
+import sys
+from pipelines.ingestion.utils.utility import get_spark, sync_to_bronze
+
+def run_metadata_aware_sync() -> None:
+    """Scans the DLT destination directory and registers tables in Unity Catalog.
+    
+    Uses Databricks SQL `LIST` to identify dynamically generated Delta tables in 
+    the Bronze layer, skipping internal metadata folders (e.g., `_delta_log`, `init`).
+    The target environment can be passed as a command-line argument (defaults to 'local_dev').
+    """
+    env = sys.argv[1] if len(sys.argv) > 1 else "local_dev"
+    spark = get_spark()
+    
+    # Root path where dlt lands everything
+    dlt_root_path = f"gs://woolie-project-lakehouse/{env}/bronze/dlt"
+    
+    print(f"Directory Search: Looking for tables in {dlt_root_path}...")
+
+    try:
+        # 1. List items via Databricks SQL to bypass Connect's dbutils limits for gs://
+        # This command runs on the cluster and leverages Unity Catalog's External Location
+        files = spark.sql(f"LIST '{dlt_root_path}'").collect()
+        
+        # 2. Filter: Must be a directory AND name must NOT start with '_'
+        tables_to_sync = []
+        for f in files:
+            name = f["name"]
+            clean_name = name.rstrip('/')
+            # In Databricks SQL LIST, directories typically end with '/' or have no file extension
+            if not clean_name.startswith('_') and clean_name != 'init' and (name.endswith('/') or '.' not in clean_name):
+                tables_to_sync.append(clean_name)
+
+        if not tables_to_sync:
+            print("📭 No data tables found to sync.")
+            return
+
+        print(f"🔍 Found {len(tables_to_sync)} tables: {tables_to_sync}")
+
+        # 3. Loop through and register each
+        for table in tables_to_sync:
+            sync_to_bronze(
+                spark=spark,
+                env=env,
+                table_name=table
+            )
+            
+    except Exception as e:
+        print(f"❌ Error listing directory: {e}")
+        print("Check if the path exists or if GCS permissions are correct.")
+
+if __name__ == "__main__":
+    run_metadata_aware_sync()
