@@ -1,23 +1,8 @@
-import os, json, sys
-from pyspark.sql import SparkSession
+import json, sys
 from pyspark.sql.functions import col, current_timestamp
 from databricks.sdk.runtime import dbutils
-
 import os
-from pyspark.sql import SparkSession
-
-def get_spark():
-    """Smart Detection: Local (Connect) vs Cloud (Native)"""
-    
-    # Databricks always sets this variable when running natively in the cloud
-    if "DATABRICKS_RUNTIME_VERSION" in os.environ:
-        print("☁️ Running natively in Databricks Cloud")
-        return SparkSession.builder.getOrCreate()
-    else:
-        print("🔌 Running locally via Databricks Connect")
-        from databricks.connect import DatabricksSession
-        # Use .serverless() when bridging from local VM
-        return DatabricksSession.builder.serverless().getOrCreate()
+from pipelines.ingestion.utils.utility import get_spark
 
 def run_ingestion():
     spark = get_spark()

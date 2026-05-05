@@ -1,3 +1,5 @@
+## This code works , it is just test to ingest data to duckdb
+
 import dlt
 # import yaml
 from dlt.sources.rest_api import rest_api_source
