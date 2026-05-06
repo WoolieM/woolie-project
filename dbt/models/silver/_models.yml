@@ -44,3 +44,108 @@ models:
         description: "Timestamp when the record was processed by Spark and written to Bronze. in UTC time"
         tests:
           - not_null
+
+  - name: int_dwellings
+    description: Public data from Melbourne for property profile
+    columns:
+      - name: primary_key
+        description: Combination Key from census_year + base_property_id
+        tests:
+          - not_null
+          - unique
+      - name: census_year 
+        description: Year of census
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 2000
+                max_value: 2100
+      - name: block_id
+        description: ID of Block
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+      - name: property_id
+        description: ID of Property
+        tests:
+          - not_null
+      - name: base_property_id
+        description: ID of Base Property
+        tests:
+          - not_null
+      - name: address_
+        description: Building Address
+        tests:
+          - not_null
+      - name: region
+        description: Regions in the greate Melbourne
+        tests:
+          - not_null
+      - name: type_
+        description: Dwelling type
+        tests:
+          - not_null
+      - name: number_
+        description: The number of Dwelling
+        tests:
+          - not_null
+      - name: longitude
+        description: Geo Longitude
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                max_value: 180
+      - name: latitude
+        description: Geo latitude
+        tests:
+          - not_null
+      - name: _dlt_load_unix_time
+        description: Data Ingestion Timestap in Unix Time, Watermark
+        tests:
+          - not_null
+      - name: ingestion_datetime_aest
+        description: Convert Unix time to Melburne Date Time
+        tests:
+          - not_null
+
+  - name: int_family_profile
+    columns:
+      - name: primary_key
+        description: Combination Key - profile + subcategory
+        tests:
+          - not_null
+          - unique
+      - name: profile
+        description: Family Profile
+        tests:
+          - not_null
+      - name: census_year
+        description:  The year of Census
+        tests:
+          - not_null
+      - name: category
+        description:  Category of Family Profile
+        tests:
+          - not_null
+      - name: sub_category
+        description: Sub Cateogyr , one of combination key
+        tests:
+          - not_null
+      - name: value_
+        description: Undefine Value
+        tests:
+          - not_null
+      - name: _dlt_load_unix_time
+        description: Watermark
+        tests:
+          - not_null
+      - name: ingestion_datetime_aest
+        description: Melbourne time from Unix Time
+        tests:
+          - not_null
+        
+        
