@@ -26,6 +26,11 @@ sources:
                 datepart: hour
                 interval: 10000
                 field: _ingested_at
+      
+      - name: dwellings
+        description: "Public data From Melbourne, showing melbourn property profile"
+      - name: family_profile
+        description: "Public data From Melbourne, showing family profile"
 
       # --- Future Batch Source ---
       # - name: transaction_header
