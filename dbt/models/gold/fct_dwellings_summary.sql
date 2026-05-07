@@ -3,16 +3,21 @@
     unique_key='daily_summary_pk'
 ) }}
 
+
 SELECT 
     CONCAT_WS(
         '-',
         census_year,
-        category
+        region,
+        type_
     ) AS daily_summary_pk,
-    SUM(value_) AS total_sum,
+    census_year,
+    region,
+    type_,
+    SUM(number_) AS total_sum,
     MAX(ingestion_datetime_aest) AS ingestion_datetime_aest
 FROM 
-    {{ ref('int_family_profile') }}
+    {{ ref('int_dwellings') }}
 {% if is_incremental() %}
 WHERE 
     DATE(ingestion_datetime_aest) >= (

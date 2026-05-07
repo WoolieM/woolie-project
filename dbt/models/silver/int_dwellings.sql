@@ -21,7 +21,7 @@ WITH source AS (
         {{ source('bronze', 'dwellings') }}
     {% if is_incremental() %}
     WHERE   
-        CAST(_dlt_load_id AS DOUBLE) >= (SELECT MAX(_dlt_load_id_num) FROM {{ this }})
+        CAST(_dlt_load_id AS DOUBLE) >= (SELECT MAX(_dlt_load_unix_time) FROM {{ this }})
     {% endif %}
 ),
 deduplicated AS (

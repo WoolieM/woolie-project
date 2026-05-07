@@ -55,3 +55,45 @@ models:
           - dbt_expectations.expect_column_values_to_be_between:
               arguments:
                 min_value: 1
+  - name: fct_family_profile_summary
+    columns:
+      - name: daily_summary_pk
+        description: Primary Key
+        tests:
+          - not_null
+          - unique
+      - name: total_sum
+        description: Sum of value_
+        tests:
+          - not_null
+      - name: ingestion_datetime_aest
+        description: Watermark
+        tests:
+          - not_null
+  - name: fct_dwellings_summary
+    columns:
+      - name: daily_summary_pk
+        description: Primary Key
+        tests:
+          - not_null
+          - unique
+      - name: census_year
+        description:  Census Year
+        tests:
+          - not_null
+      - name: region
+        description: Melourne Region
+        tests:
+          - not_null
+      - name: type_
+        description: Dwellings Type
+        tests:
+          - not_null
+      - name: total_sum
+        description: Total Sum of number_
+        tests:
+          - not_null
+      - name: ingestion_datetime_aest
+        description: Watermark
+        tests:
+          - not_null

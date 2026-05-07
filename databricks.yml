@@ -20,8 +20,14 @@ workspace:
   # GCP Databricks
   host: https://8259557353875275.5.gcp.databricks.com
 targets:
-  dev:
+  local_dev:
     default: true
+    variables:
+      catalog_name: local_dev
+      dbt_warehouse_id: "e81ba8f63bd36643"
+    workspace:
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+  dev:
     variables:
       catalog_name: dev
       dbt_warehouse_id: "e81ba8f63bd36643"

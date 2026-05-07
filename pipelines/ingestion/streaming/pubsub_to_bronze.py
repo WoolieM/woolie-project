@@ -7,7 +7,7 @@ from pipelines.ingestion.utils.utility import get_spark
 def run_ingestion():
     spark = get_spark()
     
-    env = sys.argv[1] if len(sys.argv) > 1 else "dev"
+    env = sys.argv[1] if len(sys.argv) > 1 else "local_dev"
 
     print(f"🚀 Starting Ingestion for environment: {env}")
 
