@@ -3,6 +3,7 @@
 import dlt
 from dlt.sources.rest_api import rest_api_source
 from dataclasses import dataclass
+import click
 from typing import Any, Optional
 from pathlib import Path
 from utils.utility import load_yml_config
@@ -84,6 +85,8 @@ class MelPublicAPI:
         dest = dlt.destinations.filesystem(bucket_url=self.bucket_url)
         # Using the same pipeline name ensures dlt reuses the state/connection
 
+        print(f"📁 Target Destination Bucket URL: {self.bucket_url}/{self.dataset_name}")
+
         pipeline = dlt.pipeline(
             pipeline_name=self.pipeline_name,
             destination=dest,
@@ -98,7 +101,9 @@ class MelPublicAPI:
         print(f"Successfully loaded: {resource_name} to {self.env} layer")
         return load_info
 
-def main() -> None:
+@click.command()
+@click.option('--env', default='local_dev', help='Target environment (e.g., local_dev, dev, prd)')
+def main(env: str) -> None:
     """Main entry point for the Melbourne API batch ingestion pipeline.
 
     Loads configurations from a YAML file, initializes the API wrapper,
@@ -110,8 +115,9 @@ def main() -> None:
 
     # 2. Initialize the API wrapper once
     mel_api = MelPublicAPI(
-        pipeline_name = config_data['pipeline_name'],
-        base_url= config_data["base_url"]
+        pipeline_name = f"{config_data['pipeline_name']}_{env}",
+        base_url= config_data["base_url"],
+        env=env
     )
 
     # 3. Dynamically loop through resources
