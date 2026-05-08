@@ -113,6 +113,7 @@ models:
           - not_null
 
   - name: int_family_profile
+    description: Silver layer from raw doing deduplication and data cast
     columns:
       - name: primary_key
         description: Combination Key - profile + subcategory
