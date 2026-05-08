@@ -1,14 +1,27 @@
+import click
 import sys
+import os
+# Databricks spark_python_task does not define __file__ because it uses exec().
+# However, the full path to this script is always passed as sys.argv[0].
+script_path = __file__ if '__file__' in globals() else sys.argv[0]
+
+current_dir = os.path.dirname(os.path.abspath(script_path))
+project_root = os.path.abspath(os.path.join(current_dir, "../../.."))
+
+# Add to Python path if it's not already there
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 from pipelines.ingestion.utils.utility import get_spark, sync_to_bronze
 
-def run_metadata_aware_sync() -> None:
+@click.command()
+@click.option('--env', default='local_dev', help='Target environment (e.g., local_dev, dev, prd)')
+def run_metadata_aware_sync(env: str) -> None:
     """Scans the DLT destination directory and registers tables in Unity Catalog.
     
     Uses Databricks SQL `LIST` to identify dynamically generated Delta tables in 
     the Bronze layer, skipping internal metadata folders (e.g., `_delta_log`, `init`).
-    The target environment can be passed as a command-line argument (defaults to 'local_dev').
+    The target environment can be passed as a command-line option (defaults to 'local_dev').
     """
-    env = sys.argv[1] if len(sys.argv) > 1 else "local_dev"
     spark = get_spark()
     
     # Root path where dlt lands everything
@@ -49,4 +62,6 @@ def run_metadata_aware_sync() -> None:
         print("Check if the path exists or if GCS permissions are correct.")
 
 if __name__ == "__main__":
-    run_metadata_aware_sync()
+    # standalone_mode=False prevents click from calling sys.exit()
+    # which stops Databricks/IPython from throwing the exit warning.
+    run_metadata_aware_sync(standalone_mode=False)
