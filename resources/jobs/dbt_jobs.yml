@@ -19,9 +19,22 @@ resources:
             environment_version: "5"
             dependencies:
               - "dbt-databricks>=1.8.0"
+        - environment_key: "register_uc"
+          spec:
+            environment_version: "5"
 
       tasks:
+        - task_key: register_unity_catalog
+          environment_key: "register_uc"
+          spark_python_task:
+            python_file: "../../pipelines/ingestion/batch_process/register_uc.py"
+            parameters:
+              - "--env"
+              - ${bundle.target}
+
         - task_key: run_dbt_build
+          depends_on:
+            - task_key: register_unity_catalog
           environment_key: 'dbt_cli_env'
           dbt_task:
             warehouse_id: ${var.dbt_warehouse_id}
@@ -31,7 +44,7 @@ resources:
               - "dbt deps"  # Installs dbt_utils and dbt_expectations
               # - "dbt seed"
               - "dbt build" # Builds and tests Silver & Gold in order
-            
+
             # Points to the folder containing your dbt_project.yml
             project_directory: ../../dbt 
 
