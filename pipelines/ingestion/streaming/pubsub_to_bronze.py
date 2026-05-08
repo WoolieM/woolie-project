@@ -2,6 +2,18 @@ import json, sys
 from pyspark.sql.functions import col, current_timestamp
 from databricks.sdk.runtime import dbutils
 import os
+
+
+# Databricks spark_python_task does not define __file__ because it uses exec().
+# However, the full path to this script is always passed as sys.argv[0].
+script_path = __file__ if '__file__' in globals() else sys.argv[0]
+
+current_dir = os.path.dirname(os.path.abspath(script_path))
+project_root = os.path.abspath(os.path.join(current_dir, "../../.."))
+
+# Add to Python path if it's not already there
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 from pipelines.ingestion.utils.utility import get_spark
 
 def run_ingestion():

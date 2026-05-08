@@ -1,7 +1,7 @@
 resources:
   jobs:
     dbt_daily_refresh:
-      name: "[${bundle.target}] Bitcoin Price Daily Pipeline"
+      name: "[${bundle.target}] dbt Daily Pipeline"
       permissions:
         - level: CAN_MANAGE
           user_name: wooliterchen@gmail.com
