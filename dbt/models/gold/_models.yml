@@ -56,6 +56,7 @@ models:
               arguments:
                 min_value: 1
   - name: fct_family_profile_summary
+    description: Public data From Melbourne and doing aggregation
     columns:
       - name: daily_summary_pk
         description: Primary Key
@@ -71,6 +72,7 @@ models:
         tests:
           - not_null
   - name: fct_dwellings_summary
+    description: Public data from Melbourne doing Aggregation
     columns:
       - name: daily_summary_pk
         description: Primary Key
