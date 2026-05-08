@@ -42,7 +42,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    if: false
+    if: true
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
@@ -55,9 +55,9 @@ jobs:
 
       - name: Run Ingestion Smoke Test
         run: |
-            echo "Start Steaming and dbt"
-            databricks bundle run -t dev dbt_daily_refresh &
-            wait
+            echo "Start Streaming and dbt"
+            databricks bundle run -t dev woolie_streaming_job
+            databricks bundle run -t dev dbt_daily_refresh
             echo "Both smoke tests completed!"
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
@@ -68,7 +68,7 @@ jobs:
     name: "3. Promote to Test"
     needs: deploy-dev
     # CRITICAL: This 'if' ensures it only runs when code actually hits main
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') && false
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') && true
     runs-on: ubuntu-latest
     environment: test
     permissions:
