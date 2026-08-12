@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: bronze
     description: "External tables registered in Unity Catalog via Spark ingestion"
-    # This dynamically pulls 'dev', 'test', or 'prd' from your profiles.yml
+    # This dynamically pulls 'dev', 'test', or 'prd' from profiles.yml
     database: "{{ target.catalog }}" 
     schema: bronze
 

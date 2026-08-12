@@ -1,16 +1,16 @@
 # dbt/dbt_project.yml
 
-name: 'woolie_data_platform'
-version: '2.0.0'
+name: "woolie_data_platform"
+version: "2.0.0"
 config-version: 2
-require-dbt-version: '>=1.11.0'
+require-dbt-version: ">=1.11.0"
 flags:
   use_managed_iceberg: true
-  use_materialization_v2: true        
+  use_materialization_v2: true
   use_concurrent_microbatch: true
 
 # This must match the name we used in profiles.yml
-profile: 'woolie_data_platform'
+profile: "woolie_data_platform"
 
 # Directory configuration
 model-paths: ["models"]
@@ -35,7 +35,7 @@ models:
       +materialized: incremental
       +incremental_strategy: merge
       +file_format: delta
-    
+
     # 2. Gold Layer: Final tables for Power BI
     gold:
       +schema: gold
@@ -51,21 +51,23 @@ models:
         fct_marts_or_intermediate_dependent_on_source:
           +enabled: false
 
-  
 seeds:
   dbt_project_evaluator:
-    +schema: audit
+    +schema: sandbox
 
+snapshots:
+  dbt_project_evaluator:
+    +schema: bronze
 
 dispatch:
   - macro_namespace: dbt
-    search_order: ['dbt_project_evaluator', 'dbt']
+    search_order: ["dbt_project_evaluator", "dbt"]
 
 vars:
   dbt_project_evaluator:
     # Tell the evaluator which folders correspond to which prefixes
-    staging_directories: ['silver']
-    intermediate_directories: ['silver']
-    marts_directories: ['gold']
+    staging_directories: ["silver"]
+    intermediate_directories: ["silver"]
+    marts_directories: ["gold"]
     documentation_coverage_target: 10
     test_coverage_target: 10

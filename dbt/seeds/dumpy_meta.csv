@@ -1,0 +1,6 @@
+table_,type_,freqeuncy_,primary_key,modifieddatetime
+retailsales,fact,6,transactionid,2026-05-25 12:00:00
+customer,dimension,24,customerid,2026-05-25 12:00:00
+product,dimension,24,productid,2026-05-25 12:00:00
+store,dimension,24,storeid,2026-05-25 12:00:00
+inventory,fact,12,inventoryid,2026-05-25 12:00:00

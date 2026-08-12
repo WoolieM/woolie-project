@@ -42,7 +42,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    if: true
+    if: false
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main

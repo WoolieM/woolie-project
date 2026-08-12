@@ -64,10 +64,10 @@ app/workflows/bundle.lock.yml
 **.duckdb
 **.duckdb.*
 # Prevent accidentally committing large data files to Git
-*.csv
+
 *.parquet
 *.jsonl
-# Your playground notebook checkpoints
+# notebook checkpoints
 notebooks/.ipynb_checkpoints/
 **/.ipynb_checkpoints/
 
